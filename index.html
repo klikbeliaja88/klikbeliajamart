@@ -518,18 +518,26 @@
     <span class="ic">🔍</span>
     <input id="global-search-mobile" type="text" placeholder="Cari sembako, susu, pampers, dll..." onkeydown="if(event.key==='Enter'){searchAndGo(this.value)}">
   </div>
-  <nav class="mainnav" id="mainnav">
-    <div class="container">
-      <a href="#" data-nav="home" onclick="showView('home'); closeMobileNav(); return false;">Home</a>
-      <a href="#" data-nav="shop" onclick="showView('shop'); closeMobileNav(); return false;">Belanja</a>
-      <a href="#" data-nav="shop" onclick="showView('shop'); filterCategory('Sembako'); closeMobileNav(); return false;">Kategori</a>
-      <a href="#" data-nav="shop" onclick="showView('shop'); filterCategory('promo'); closeMobileNav(); return false;">Promo</a>
-      <a href="#" data-nav="track" onclick="showView('track'); closeMobileNav(); return false;">Cek Pesanan</a>
-      <a href="#" data-nav="about" onclick="showView('about'); closeMobileNav(); return false;">Tentang Kami</a>
-      <a href="#" data-nav="contact" onclick="showView('contact'); closeMobileNav(); return false;">Hubungi Kami</a>
-    </div>
-  </nav>
 </header>
+<!-- Menu mobile & overlay-nya sengaja diletakkan DI LUAR <header>. Header
+     memakai position:sticky + z-index sehingga membentuk stacking context
+     sendiri; kalau menu (position:fixed) ada di DALAM header, angka
+     z-index-nya cuma dibandingkan di dalam header saja, bukan dengan
+     elemen lain di halaman. Akibatnya overlay gelap (di luar header) malah
+     tampil DI ATAS menu dan menutupi semua link sehingga tidak bisa diklik.
+     Dengan nav & overlay sama-sama di luar header, z-index bisa dibandingkan
+     langsung dan menu jadi bisa diklik normal. -->
+<nav class="mainnav" id="mainnav">
+  <div class="container">
+    <a href="#" data-nav="home" onclick="showView('home'); closeMobileNav(); return false;">Home</a>
+    <a href="#" data-nav="shop" onclick="showView('shop'); closeMobileNav(); return false;">Belanja</a>
+    <a href="#" data-nav="shop" onclick="showView('shop'); filterCategory('Sembako'); closeMobileNav(); return false;">Kategori</a>
+    <a href="#" data-nav="shop" onclick="showView('shop'); filterCategory('promo'); closeMobileNav(); return false;">Promo</a>
+    <a href="#" data-nav="track" onclick="showView('track'); closeMobileNav(); return false;">Cek Pesanan</a>
+    <a href="#" data-nav="about" onclick="showView('about'); closeMobileNav(); return false;">Tentang Kami</a>
+    <a href="#" data-nav="contact" onclick="showView('contact'); closeMobileNav(); return false;">Hubungi Kami</a>
+  </div>
+</nav>
 <div class="mobile-nav-overlay" id="mobile-nav-overlay" onclick="closeMobileNav()"></div>
 
 <!-- ============ HOME ============ -->
