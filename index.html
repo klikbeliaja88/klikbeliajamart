@@ -33,6 +33,7 @@
     color:var(--ink);
     font-family:'Plus Jakarta Sans', sans-serif;
     -webkit-font-smoothing:antialiased;
+    overflow-x:hidden; /* jaga-jaga elemen dekoratif kecil (badge, shadow) tidak memicu scroll horizontal di HP */
   }
   h1,h2,h3,.display{
     font-family:'Plus Jakarta Sans', sans-serif;
@@ -105,13 +106,30 @@
   }
   .icon-btn:hover{background:#D8F0DF;}
   .badge-count{
-    position:absolute; top:-4px; right:-4px;
+    position:absolute; top:-4px; right:-2px;
     background:var(--stamp); color:#fff;
     font-size:10px; font-weight:700;
     min-width:17px; height:17px; border-radius:50%;
     display:flex; align-items:center; justify-content:center;
     border:2px solid var(--paper-card);
   }
+
+  /* ===== MOBILE HEADER CONTROLS (hamburger, search toggle) ===== */
+  .hamburger-btn{display:none; flex-shrink:0;}
+  .mobile-search-btn{display:none;}
+  .mobile-search-row{
+    display:none; align-items:center; gap:8px; padding:10px 20px;
+    border-top:1px solid var(--line); position:relative; background:var(--paper-card);
+  }
+  .mobile-search-row.active{display:flex;}
+  .mobile-search-row .ic{font-size:15px; opacity:.5; flex-shrink:0;}
+  .mobile-search-row input{
+    flex:1; padding:10px 14px; border:1.5px solid var(--line); border-radius:20px;
+    font-family:inherit; font-size:14px; min-width:0;
+  }
+  .mobile-search-row input:focus{border-color:var(--green); outline:none;}
+  .mobile-nav-overlay{position:fixed; inset:0; background:rgba(15,30,20,0.45); z-index:65; display:none;}
+  .mobile-nav-overlay.active{display:block;}
 
   nav.mainnav{
     background:var(--paper-card); border-top:1px solid var(--line); border-bottom:1px solid var(--line);
@@ -124,6 +142,19 @@
   }
   nav.mainnav a:hover{color:var(--green-dark);}
   nav.mainnav a.active{color:var(--green-dark); border-bottom-color:var(--green);}
+
+  @media (max-width:980px){
+    .hamburger-btn{display:inline-flex;}
+    .mobile-search-btn{display:inline-flex;}
+    nav.mainnav{
+      position:fixed; top:0; left:0; height:100%; width:280px; max-width:82vw;
+      z-index:70; box-shadow:6px 0 24px rgba(0,0,0,0.15); border:none;
+      transform:translateX(-100%); transition:transform .25s ease; overflow-y:auto;
+    }
+    nav.mainnav.active{transform:translateX(0);}
+    nav.mainnav .container{flex-direction:column; align-items:stretch; padding:70px 0 20px; overflow-x:visible;}
+    nav.mainnav a{border-bottom:1px solid var(--line); padding:15px 22px; white-space:normal;}
+  }
 
   /* ===== VIEWS ===== */
   .view{display:none;}
@@ -436,6 +467,16 @@
     .cat-grid{grid-template-columns:repeat(3,1fr);}
     .prod-grid{grid-template-columns:repeat(2,1fr);}
     .footer-grid{grid-template-columns:1fr;}
+
+    /* Cegah header meluber ke luar layar di HP kecil (mis. 390px) --
+       kecilkan logo, jarak antar elemen, dan ukuran tombol ikon. */
+    .container{padding:0 14px;}
+    .header-row{gap:6px; padding:12px 0;}
+    .logo-mark{width:38px; height:38px; font-size:18px; border-radius:11px;}
+    .logo-text .name{font-size:15px;}
+    .logo-text .tag{font-size:8.5px; letter-spacing:.04em;}
+    .hamburger-btn, .header-actions .icon-btn{padding:8px; font-size:16px; border-radius:10px;}
+    .header-actions{gap:4px; padding-right:2px;}
   }
   @media (prefers-reduced-motion: reduce){
     *{transition:none !important; scroll-behavior:auto !important;}
@@ -453,6 +494,7 @@
 
 <header class="site">
   <div class="container header-row">
+    <button class="icon-btn hamburger-btn" id="hamburger-btn" title="Menu" onclick="toggleMobileNav()">☰</button>
     <a href="#" class="logo" onclick="showView('home'); return false;">
       <span class="logo-mark">🛒</span>
       <span class="logo-text">
@@ -460,29 +502,35 @@
         <span class="tag">Mart Kebutuhan Rumah</span>
       </span>
     </a>
-    <div class="search-wrap">
+    <div class="search-wrap" id="desktop-search-wrap">
       <span class="ic">🔍</span>
       <input id="global-search" type="text" placeholder="Cari sembako, susu, pampers, dll..." onkeydown="if(event.key==='Enter'){searchAndGo(this.value)}">
     </div>
     <div class="header-actions">
+      <button class="icon-btn mobile-search-btn" title="Cari" onclick="toggleMobileSearch()">🔍</button>
       <button class="icon-btn" title="Cek Pesanan" onclick="showView('track')">📦</button>
       <button class="icon-btn" title="Keranjang" onclick="openCart()">
         🛍️<span class="badge-count" id="cart-count">0</span>
       </button>
     </div>
   </div>
-  <nav class="mainnav">
+  <div class="mobile-search-row" id="mobile-search-row">
+    <span class="ic">🔍</span>
+    <input id="global-search-mobile" type="text" placeholder="Cari sembako, susu, pampers, dll..." onkeydown="if(event.key==='Enter'){searchAndGo(this.value)}">
+  </div>
+  <nav class="mainnav" id="mainnav">
     <div class="container">
-      <a href="#" data-nav="home" onclick="showView('home'); return false;">Home</a>
-      <a href="#" data-nav="shop" onclick="showView('shop'); return false;">Belanja</a>
-      <a href="#" data-nav="shop" onclick="showView('shop'); filterCategory('Sembako'); return false;">Kategori</a>
-      <a href="#" data-nav="shop" onclick="showView('shop'); filterCategory('promo'); return false;">Promo</a>
-      <a href="#" data-nav="track" onclick="showView('track'); return false;">Cek Pesanan</a>
-      <a href="#" data-nav="about" onclick="showView('about'); return false;">Tentang Kami</a>
-      <a href="#" data-nav="contact" onclick="showView('contact'); return false;">Hubungi Kami</a>
+      <a href="#" data-nav="home" onclick="showView('home'); closeMobileNav(); return false;">Home</a>
+      <a href="#" data-nav="shop" onclick="showView('shop'); closeMobileNav(); return false;">Belanja</a>
+      <a href="#" data-nav="shop" onclick="showView('shop'); filterCategory('Sembako'); closeMobileNav(); return false;">Kategori</a>
+      <a href="#" data-nav="shop" onclick="showView('shop'); filterCategory('promo'); closeMobileNav(); return false;">Promo</a>
+      <a href="#" data-nav="track" onclick="showView('track'); closeMobileNav(); return false;">Cek Pesanan</a>
+      <a href="#" data-nav="about" onclick="showView('about'); closeMobileNav(); return false;">Tentang Kami</a>
+      <a href="#" data-nav="contact" onclick="showView('contact'); closeMobileNav(); return false;">Hubungi Kami</a>
     </div>
   </nav>
 </header>
+<div class="mobile-nav-overlay" id="mobile-nav-overlay" onclick="closeMobileNav()"></div>
 
 <!-- ============ HOME ============ -->
 <section class="view active" id="view-home">
@@ -1217,6 +1265,8 @@ function showView(name){
   document.querySelectorAll('.mainnav a').forEach(a=>a.classList.remove('active'));
   document.querySelectorAll('.mainnav a[data-nav="'+name+'"]').forEach(a=>a.classList.add('active'));
   window.scrollTo({top:0, behavior:'instant' in document.documentElement.style ? 'instant':'auto'});
+  closeMobileNav();
+  document.getElementById('mobile-search-row').classList.remove('active');
   if(name==='shop') renderShop();
 }
 
@@ -1339,6 +1389,8 @@ function toggleFilter(catId){
 
 function searchAndGo(term){
   activeSearch = term;
+  document.getElementById('global-search').value = term;
+  document.getElementById('global-search-mobile').value = term;
   showView('shop');
   applyFilters();
 }
@@ -1352,7 +1404,7 @@ function applyFilters(){
     list = list.filter(p=>activeFilters.has(p.cat));
   }
 
-  const term = (document.getElementById('global-search').value || activeSearch || '').toLowerCase().trim();
+  const term = (activeSearch || '').toLowerCase().trim();
   if(term){
     list = list.filter(p=>p.name.toLowerCase().includes(term));
   }
@@ -1372,12 +1424,37 @@ function applyFilters(){
   }
 }
 
+// Dua kotak pencarian (desktop & mobile) saling sinkron -- ketik di salah
+// satu otomatis mengisi yang lain juga, supaya hasilnya konsisten kalau
+// orang beralih ukuran layar di tengah pencarian.
 document.addEventListener('input', function(e){
-  if(e.target && e.target.id==='global-search'){
+  if(e.target && (e.target.id==='global-search' || e.target.id==='global-search-mobile')){
     activeSearch = e.target.value;
+    const other = e.target.id==='global-search' ? 'global-search-mobile' : 'global-search';
+    const otherEl = document.getElementById(other);
+    if(otherEl && otherEl.value !== e.target.value) otherEl.value = e.target.value;
     if(document.getElementById('view-shop').classList.contains('active')) applyFilters();
   }
 });
+
+/* ============================================================
+   NAVIGASI MOBILE (hamburger menu & search toggle)
+   ============================================================ */
+function toggleMobileNav(){
+  document.getElementById('mainnav').classList.toggle('active');
+  document.getElementById('mobile-nav-overlay').classList.toggle('active');
+}
+function closeMobileNav(){
+  document.getElementById('mainnav').classList.remove('active');
+  document.getElementById('mobile-nav-overlay').classList.remove('active');
+}
+function toggleMobileSearch(){
+  const row = document.getElementById('mobile-search-row');
+  row.classList.toggle('active');
+  if(row.classList.contains('active')){
+    setTimeout(()=>document.getElementById('global-search-mobile').focus(), 50);
+  }
+}
 
 /* ============================================================
    CART
