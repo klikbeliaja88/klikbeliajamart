@@ -225,6 +225,7 @@
 
   /* ===== SECTION HEADERS ===== */
   .section{padding:52px 0;}
+  .section-tight-top{padding-top:0;} /* di desktop, jarak cukup dari padding-bottom section sebelumnya */
   .section-head{display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:26px; gap:16px; flex-wrap:wrap;}
   .section-head h2{font-size:26px;}
   .section-eyebrow{font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--green); font-weight:700; margin-bottom:6px; display:block;}
@@ -286,7 +287,7 @@
   .stock-out{position:absolute; inset:0; background:rgba(255,255,255,0.9); display:flex; align-items:center; justify-content:center; font-weight:800; color:var(--stamp); font-size:13px; letter-spacing:.04em;}
 
   /* ===== FEATURES STRIP ===== */
-  .features{background:var(--paper-card); border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
+  .features{background:var(--paper-card); border-top:1px solid var(--line); border-bottom:1px solid var(--line); margin-top:12px;}
   .feat-grid{display:grid; grid-template-columns:repeat(4,1fr); padding:24px 0;}
   .feat-item{display:flex; align-items:center; gap:12px; font-size:13px; font-weight:600; padding:0 14px; color:var(--ink);}
   .feat-item .ic{font-size:24px; width:44px; height:44px; border-radius:12px; background:var(--green-light); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
@@ -509,6 +510,17 @@
     .logo-text .tag{font-size:8.5px; letter-spacing:.04em;}
     .hamburger-btn, .header-actions .icon-btn{padding:8px; font-size:16px; border-radius:10px;}
     .header-actions{gap:4px; padding-right:2px;}
+
+    /* Perbesar jarak antar section di beranda mode HP -- sebelumnya
+       section-section beruntun (Promo Hari Ini, Produk Terlaris) memakai
+       padding-top:0 supaya tidak dobel jarak di desktop, tapi di layar
+       sempit ini bikin judul section terlihat "menempel" ke konten section
+       sebelumnya. Beri jarak tambahan khusus di mode HP. */
+    .section{padding:34px 0;}
+    .section-tight-top{padding-top:30px;}
+    .section-head{margin-bottom:18px;}
+    .features{margin-top:16px;}
+    .feat-grid{padding:20px 0;}
   }
   @media (prefers-reduced-motion: reduce){
     *{transition:none !important; scroll-behavior:auto !important;}
@@ -579,7 +591,7 @@
       <div>
         <span class="eyebrow-tag">🏷️ Toko Kelontong Online No.1 di Sekitarmu</span>
         <h1>Belanja kebutuhan rumah,<br><em>jadi lebih mudah.</em></h1>
-        <p class="lede">Sembako, susu, popok bayi, sampai perlengkapan bersih-bersih rumah — pesan lewat HP, kami antar sampai depan pintu hari ini juga.</p>
+        <p class="lede">Sembako, susu, popok bayi, sampai perlengkapan bersih-bersih rumah pesan lewat HP, kami antar sampai depan pintu hari ini juga.</p>
         <div class="hero-ctas">
           <button class="btn btn-primary" onclick="showView('shop')">Belanja Sekarang →</button>
           <button class="btn btn-ghost" onclick="showView('track')">Lacak Pesanan Saya</button>
@@ -617,7 +629,7 @@
     <div class="cat-grid" id="home-categories"></div>
   </div>
 
-  <div class="container section" style="padding-top:0;">
+  <div class="container section section-tight-top">
     <div class="section-head">
       <div>
         <span class="section-eyebrow">🔥 Jangan Sampai Kehabisan</span>
@@ -628,7 +640,7 @@
     <div class="prod-grid" id="home-promo"></div>
   </div>
 
-  <div class="container section" style="padding-top:0;">
+  <div class="container section section-tight-top">
     <div class="section-head">
       <div>
         <span class="section-eyebrow">⭐ Favorit Pelanggan</span>
@@ -884,8 +896,8 @@
 <section class="view" id="view-about">
   <div class="container prose-page">
     <h1>Tentang Klik Beli Aja Mart</h1>
-    <p>Klik Beli Aja Mart adalah toko kelontong online yang melayani kebutuhan sembako dan rumah tangga harian mulai dari beras dan minyak goreng, susu untuk si kecil dan popok bayi, sampai perlengkapan kebersihan rumah.</p>
-    <p>Kami percaya belanja kebutuhan rumah tidak perlu ribet. Cukup buka website, pilih produk, dan pesanan diantar ke rumahmu hari itu juga. Cocok untuk ibu rumah tangga, keluarga muda, orang tua dengan bayi, sampai karyawan yang sibuk sepanjang hari.</p>
+    <p>Klik Beli Aja Mart adalah toko kelontong online yang melayani kebutuhan sembako dan rumah tangga harian dari beras dan minyak goreng, susu untuk si kecil dan ibu hamil, popok bayi, sampai perlengkapan kebersihan rumah.</p>
+    <p>Kami percaya belanja kebutuhan rumah tidak perlu ribet. Cukup buka website, pilih produk dan pesanan diantar ke rumahmu hari itu juga. Cocok untuk ibu rumah tangga, keluarga muda, orang tua dengan bayi, sampai karyawan yang sibuk sepanjang hari.</p>
     <p>Setiap pesanan diproses dengan cermat: stok selalu diperbarui, harga transparan, dan tim kami siap membantu lewat WhatsApp kapan pun kamu butuh.</p>
   </div>
 </section>
@@ -897,9 +909,9 @@
     <p>Ada pertanyaan soal produk, stok, atau pesananmu? Tim kami siap membantu setiap hari.</p>
     <div class="contact-cards">
       <div class="contact-card"><div class="ic">💬</div><div class="t">WhatsApp</div><div class="d" id="contact-wa">0895-4026-65455</div></div>
-      <div class="contact-card"><div class="ic">📍</div><div class="t">Alamat Toko</div><div class="d" id="contact-address">Taman Adiyasa Blok N 12 No 11</div></div>
+      <div class="contact-card"><div class="ic">📍</div><div class="t">Alamat Toko</div><div class="d" id="contact-address">Taman Adiyasa Blok N 12 No 11, Kab. Tangerang</div></div>
       <div class="contact-card"><div class="ic">🕒</div><div class="t">Jam Operasional</div><div class="d" id="contact-hours">Setiap hari, 07.00 – 21.00</div></div>
-      <div class="contact-card"><div class="ic">📧</div><div class="t">Email</div><div class="d" id="contact-email">halo@klikbeliajamart.id</div></div>
+      <div class="contact-card"><div class="ic">📧</div><div class="t">Email</div><div class="d" id="contact-email">klikbeliaja@gmail.com</div></div>
     </div>
   </div>
 </section>
@@ -928,7 +940,7 @@
     <div>
       <h4>Ikuti Kami</h4>
       <ul>
-        <li id="footer-instagram">Instagram @klikbeliaja88</li>
+        <li id="footer-instagram">Instagram @klikbeliajamart</li>
         <li>WhatsApp <span id="footer-wa">0895-4026-65455</span></li>
       </ul>
     </div>
@@ -1081,8 +1093,6 @@ function applySettings(settings){
   }
   if(settings.Shipping_Fee !== undefined && settings.Shipping_Fee !== '' && !isNaN(Number(settings.Shipping_Fee))){
     STORE_SETTINGS.shippingFee = Number(settings.Shipping_Fee);
-    const shipLabel = document.getElementById('ship-fee-label');
-    if(shipLabel) shipLabel.textContent = rupiah(STORE_SETTINGS.shippingFee);
   }
   if(settings.Bank_Name || settings.Bank_Account || settings.Bank_Account_Name){
     STORE_SETTINGS.bank = {
@@ -1205,7 +1215,16 @@ function distanceKm(lat1, lon1, lat2, lon2){
 // Mengembalikan {fee, reason} -- reason dipakai untuk menampilkan label
 // alasan gratis ongkir ke pelanggan ('pickup'|'promo'|'radius'|'minitems'|null)
 function calculateShippingFee(){
-  if(checkoutData.shipping === 'pickup') return { fee: 0, reason: 'pickup' };
+  return calculateShippingFeeForMethod(checkoutData.shipping);
+}
+
+// Dipisah dari calculateShippingFee() supaya label ongkir di pilihan
+// "Delivery" pada Step 2 checkout bisa selalu dihitung seolah-olah metode
+// Delivery yang dipilih -- terlepas dari metode yang SEDANG aktif dipilih
+// pelanggan (misal saat "Pickup" masih terpilih, atau baru pindah dari
+// Delivery ke Pickup dan balik lagi).
+function calculateShippingFeeForMethod(method){
+  if(method === 'pickup') return { fee: 0, reason: 'pickup' };
 
   if(isFreeShipPromoActive()) return { fee: 0, reason: 'promo' };
 
@@ -1238,6 +1257,21 @@ function shippingFeeHtml(result){
     return `<span style="color:var(--green-dark); font-weight:800;">GRATIS 🎉</span> <span style="font-size:11px; color:var(--ink-soft);">(${FREESHIP_REASON_LABEL[result.reason]})</span>`;
   }
   return rupiah(result.fee);
+}
+
+// Update keterangan ongkir di kartu pilihan "Delivery" pada Step 2 checkout
+// (mis. "Diantar ke alamat kamu — ongkir Rp10.000" berubah jadi "GRATIS 🎉"
+// begitu syarat gratis ongkir terpenuhi). Dipanggil setiap kali isi
+// keranjang atau pengaturan gratis ongkir berubah.
+function updateShipDeliveryLabel(){
+  const shipLabel = document.getElementById('ship-fee-label');
+  if(!shipLabel) return;
+  const result = calculateShippingFeeForMethod('delivery');
+  if(result.fee === 0){
+    shipLabel.innerHTML = '<span style="color:var(--green-dark); font-weight:800;">GRATIS 🎉</span>';
+  } else {
+    shipLabel.textContent = rupiah(result.fee);
+  }
 }
 
 /* ============================================================
@@ -1683,6 +1717,7 @@ function refreshCartUI(){
   document.getElementById('cart-freeship-widget').innerHTML = freeShipProgressHtml();
   const checkoutBtn = document.getElementById('cart-checkout-btn');
   if(checkoutBtn) checkoutBtn.disabled = isBelowMinimumOrder();
+  updateShipDeliveryLabel();
 
   const linesWrap = document.getElementById('cart-lines');
   const entries = Object.entries(cart);
