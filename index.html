@@ -196,6 +196,8 @@
   .btn-dark:hover{background:#0A140F;}
   .btn-block{width:100%;}
   .btn-sm{padding:8px 14px; font-size:13px; border-radius:9px;}
+  .btn:disabled{opacity:.5; cursor:not-allowed; box-shadow:none;}
+  .btn:disabled:hover{background:inherit;}
 
   /* Promo/receipt card in hero -- now a clean modern card with a real
      countdown timer, instead of a rotated "nota" receipt */
@@ -333,6 +335,25 @@
   .sum-row{display:flex; justify-content:space-between; font-size:13.5px; padding:4px 0;}
   .sum-row.total{font-size:17px; font-weight:800; border-top:1px solid var(--line); margin-top:8px; padding-top:10px;}
 
+  /* ===== WIDGET GRATIS ONGKIR (progress + rekomendasi produk) ===== */
+  .freeship-widget{background:#FFF7E8; border:1.5px dashed var(--amber); border-radius:14px; padding:14px 14px 12px; margin-bottom:14px;}
+  .freeship-widget.freeship-done{background:var(--green-light); border:1.5px solid var(--green); display:flex; align-items:center; gap:8px; font-size:13.5px; font-weight:700; color:var(--green-dark); padding:12px 14px;}
+  .freeship-widget .fw-text{font-size:13px; margin:0 0 8px; line-height:1.4;}
+  .freeship-widget .fw-text b{color:var(--amber-dark);}
+  .fw-bar{height:8px; border-radius:20px; background:#F0DFB8; overflow:hidden;}
+  .fw-bar-fill{height:100%; background:linear-gradient(90deg, var(--amber), var(--green)); border-radius:20px; transition:width .3s ease;}
+  .fw-sub{font-size:11.5px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.03em; margin:12px 0 8px;}
+  .fw-picks{display:flex; gap:8px; overflow-x:auto; padding-bottom:2px;}
+  .fw-pick{flex:0 0 auto; width:92px; background:#fff; border:1.5px solid var(--line); border-radius:12px; padding:8px; text-align:left; cursor:pointer; font-family:inherit;}
+  .fw-pick:hover{border-color:var(--green);}
+  .fw-pick-emoji{display:flex; align-items:center; justify-content:center; width:100%; height:44px; font-size:22px; background:var(--green-light); border-radius:8px; overflow:hidden;}
+  .fw-pick-name{display:block; font-size:11px; font-weight:700; margin-top:6px; line-height:1.25; height:28px; overflow:hidden;}
+  .fw-pick-price{display:block; font-size:11px; color:var(--green-dark); font-weight:700; margin-top:2px;}
+  .fw-pick-add{display:block; font-size:10.5px; color:#fff; background:var(--green); text-align:center; border-radius:6px; padding:3px 0; margin-top:6px; font-weight:700;}
+
+  /* ===== SYARAT MINIMAL BELANJA (minimum order) ===== */
+  .minorder-warning{background:#FDEDED; border:1.5px solid var(--stamp); border-radius:14px; padding:12px 14px; margin-bottom:14px; font-size:12.5px; color:#8C1F1F; font-weight:600; line-height:1.4;}
+
   /* ===== PRODUCT DETAIL ===== */
   .detail-wrap{padding:36px 0 60px; display:grid; grid-template-columns:1fr 1fr; gap:44px;}
   .detail-img{
@@ -382,6 +403,17 @@
   .radio-card .rc-title{font-weight:700; font-size:14px;}
   .radio-card .rc-sub{font-size:12px; color:var(--ink-soft);}
   .step-actions{display:flex; justify-content:space-between; margin-top:22px;}
+
+  /* ===== SESI PENGANTARAN (batch delivery) ===== */
+  .delivery-slot-box{margin-top:14px; padding-top:14px; border-top:1.5px dashed var(--line);}
+  .delivery-slot-box > label{display:block; font-size:12.5px; font-weight:700; margin-bottom:8px; text-transform:uppercase; letter-spacing:.03em; color:var(--ink-soft);}
+  .slot-options{display:flex; flex-direction:column; gap:8px;}
+  .slot-option{display:flex; align-items:center; gap:10px; border:1.5px solid var(--line); border-radius:12px; padding:11px 13px; cursor:pointer; background:#fff; font-size:13px;}
+  .slot-option input{width:16px; height:16px; accent-color:var(--green); flex-shrink:0;}
+  .slot-option.selected{border-color:var(--green); background:var(--green-light); box-shadow:0 0 0 2px var(--green) inset;}
+  .slot-option .so-title{font-weight:700;}
+  .slot-option .so-time{color:var(--ink-soft); font-size:12px;}
+  .field-hint{font-size:11.5px; color:var(--ink-soft); margin-top:6px; line-height:1.4;}
 
   .order-summary-card{background:var(--paper-card); border:1px solid var(--line); border-radius:18px; padding:22px; height:fit-content; position:sticky; top:118px; box-shadow:var(--shadow-sm);}
   .order-summary-card h3{font-size:16px; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--line);}
@@ -488,7 +520,7 @@
 <div class="topbar">
   <div class="container">
     <span>📍 Melayani area sekitar toko — pengiriman hari ini untuk order sebelum jam 15.00</span>
-    <span>💬 WhatsApp Admin: <span id="topbar-wa">0812-3456-7890</span></span>
+    <span>💬 WhatsApp Admin: <span id="topbar-wa">0895-4026-65455</span></span>
   </div>
 </div>
 
@@ -731,6 +763,18 @@
             <button type="button" class="btn btn-ghost btn-sm" onclick="checkFreeShipByLocation()">Cek Ongkir Gratis berdasarkan Lokasi Saya</button>
             <p id="freeship-location-result" style="font-size:12px; margin-top:8px; margin-bottom:0;"></p>
           </div>
+
+          <div class="delivery-slot-box" id="delivery-slot-box">
+            <label for="f-delivery-date">🗓️ Pilih Tanggal &amp; Sesi Pengantaran</label>
+            <p class="field-hint" style="margin-top:-4px; margin-bottom:12px;">Pesanan diantar berkelompok (batch) sesuai sesi terjadwal, bukan satu per satu — supaya lebih hemat waktu &amp; ongkos antar.</p>
+            <div class="field" style="margin-bottom:12px;">
+              <input type="date" id="f-delivery-date" onchange="onDeliveryDateChange()">
+              <div class="field-error" id="err-delivery-date">Tanggal pengantaran wajib dipilih.</div>
+            </div>
+            <div class="slot-options" id="delivery-slot-options"></div>
+            <div class="field-error" id="err-delivery-slot">Sesi pengantaran wajib dipilih.</div>
+          </div>
+
           <div class="step-actions">
             <button class="btn btn-ghost" style="color:var(--ink); border-color:var(--ink);" onclick="goStep(1)">← Kembali</button>
             <button class="btn btn-primary" onclick="goStep(3)">Lanjut ke Pembayaran →</button>
@@ -780,6 +824,8 @@
       <div class="order-summary-card">
         <h3>Ringkasan Pesanan</h3>
         <div id="checkout-lines"></div>
+        <div id="co-minorder-warning"></div>
+        <div id="co-freeship-widget"></div>
         <div class="sum-row"><span>Subtotal</span><span id="co-subtotal">Rp0</span></div>
         <div class="sum-row"><span>Ongkos Kirim</span><span id="co-ongkir">Rp10.000</span></div>
         <div class="sum-row total"><span>Total</span><span id="co-total">Rp0</span></div>
@@ -797,6 +843,7 @@
       <div class="order-num" id="success-order-num">#KBA-000000-00000</div>
       <p style="color:var(--ink-soft); font-size:14px;">Terima kasih telah belanja di Klik Beli Aja Mart</p>
       <div class="success-total" id="success-total">Rp0</div>
+      <p id="success-delivery-info" style="display:none; font-size:13px; font-weight:700; color:var(--green-dark); background:var(--green-light); border-radius:10px; padding:10px 14px; margin-top:10px;"></p>
 
       <div id="proof-upload-section" style="display:none; text-align:left; margin-top:18px; padding:16px; background:var(--paper); border:1.5px dashed var(--ink); border-radius:8px;">
         <p style="font-size:13.5px; font-weight:700; margin:0 0 4px;">📎 Upload Bukti Pembayaran</p>
@@ -837,8 +884,8 @@
 <section class="view" id="view-about">
   <div class="container prose-page">
     <h1>Tentang Klik Beli Aja Mart</h1>
-    <p>Klik Beli Aja Mart adalah toko kelontong online yang melayani kebutuhan sembako dan rumah tangga harian — dari beras dan minyak goreng, susu untuk si kecil dan ibu hamil, popok bayi, sampai perlengkapan kebersihan rumah.</p>
-    <p>Kami percaya belanja kebutuhan rumah tidak perlu ribet. Cukup buka website, pilih produk, dan pesanan diantar ke rumahmu hari itu juga — cocok untuk ibu rumah tangga, keluarga muda, orang tua dengan bayi, sampai karyawan yang sibuk sepanjang hari.</p>
+    <p>Klik Beli Aja Mart adalah toko kelontong online yang melayani kebutuhan sembako dan rumah tangga harian mulai dari beras dan minyak goreng, susu untuk si kecil dan popok bayi, sampai perlengkapan kebersihan rumah.</p>
+    <p>Kami percaya belanja kebutuhan rumah tidak perlu ribet. Cukup buka website, pilih produk, dan pesanan diantar ke rumahmu hari itu juga. Cocok untuk ibu rumah tangga, keluarga muda, orang tua dengan bayi, sampai karyawan yang sibuk sepanjang hari.</p>
     <p>Setiap pesanan diproses dengan cermat: stok selalu diperbarui, harga transparan, dan tim kami siap membantu lewat WhatsApp kapan pun kamu butuh.</p>
   </div>
 </section>
@@ -849,8 +896,8 @@
     <h1>Hubungi Kami</h1>
     <p>Ada pertanyaan soal produk, stok, atau pesananmu? Tim kami siap membantu setiap hari.</p>
     <div class="contact-cards">
-      <div class="contact-card"><div class="ic">💬</div><div class="t">WhatsApp</div><div class="d" id="contact-wa">0812-3456-7890</div></div>
-      <div class="contact-card"><div class="ic">📍</div><div class="t">Alamat Toko</div><div class="d" id="contact-address">Jl. Kenanga Raya No. 12, Jakarta</div></div>
+      <div class="contact-card"><div class="ic">💬</div><div class="t">WhatsApp</div><div class="d" id="contact-wa">0895-4026-65455</div></div>
+      <div class="contact-card"><div class="ic">📍</div><div class="t">Alamat Toko</div><div class="d" id="contact-address">Taman Adiyasa Blok N 12 No 11</div></div>
       <div class="contact-card"><div class="ic">🕒</div><div class="t">Jam Operasional</div><div class="d" id="contact-hours">Setiap hari, 07.00 – 21.00</div></div>
       <div class="contact-card"><div class="ic">📧</div><div class="t">Email</div><div class="d" id="contact-email">halo@klikbeliajamart.id</div></div>
     </div>
@@ -881,8 +928,8 @@
     <div>
       <h4>Ikuti Kami</h4>
       <ul>
-        <li id="footer-instagram">Instagram @klikbeliajamart</li>
-        <li>WhatsApp <span id="footer-wa">0812-3456-7890</span></li>
+        <li id="footer-instagram">Instagram @klikbeliaja88</li>
+        <li>WhatsApp <span id="footer-wa">0895-4026-65455</span></li>
       </ul>
     </div>
   </div>
@@ -901,10 +948,12 @@
   </div>
   <div class="drawer-body" id="cart-lines"></div>
   <div class="drawer-foot">
+    <div id="cart-minorder-warning"></div>
+    <div id="cart-freeship-widget"></div>
     <div class="sum-row"><span>Subtotal</span><span id="cart-subtotal">Rp0</span></div>
     <div class="sum-row"><span>Ongkos Kirim</span><span id="cart-ongkir">Rp10.000</span></div>
     <div class="sum-row total"><span>Total</span><span id="cart-total">Rp0</span></div>
-    <button class="btn btn-primary btn-block" style="margin-top:14px;" onclick="goCheckout()">Lanjut Checkout</button>
+    <button class="btn btn-primary btn-block" id="cart-checkout-btn" style="margin-top:14px;" onclick="goCheckout()">Lanjut Checkout</button>
   </div>
 </div>
 
@@ -969,10 +1018,18 @@ const CONFIG = {
 };
 function isBackendConnected(){ return !!CONFIG.API_URL; }
 
+// Sesi pengantaran batch default (dipakai kalau admin belum mengatur sendiri
+// lewat Pengaturan Toko > Ongkir & Pengiriman > Sesi Pengantaran)
+const DEFAULT_DELIVERY_SLOTS = [
+  { label: 'Pagi', start: '08:00', end: '11:00' },
+  { label: 'Sore', start: '15:00', end: '18:00' },
+  { label: 'Malam', start: '19:00', end: '21:00' },
+];
+
 // Nilai default dipakai kalau belum tersambung ke Sheets / kolom Settings kosong
 let STORE_SETTINGS = {
   shippingFee: 10000,
-  whatsapp: '0812-3456-7890',
+  whatsapp: '0895-4026-65455',
   heroTitle: 'Promo Hari Ini',
   storeName: 'Klik Beli Aja Mart',
   bank: { name:'', account:'', holder:'' },
@@ -983,6 +1040,9 @@ let STORE_SETTINGS = {
   freeShipRadiusKm: 0,
   freeShipPromoActive: false,
   freeShipPromoEndDate: null,
+  freeShipMinSpend: 60000,
+  minimumOrder: 15000,
+  deliverySlots: DEFAULT_DELIVERY_SLOTS,
 };
 
 // Hasil cek lokasi pelanggan untuk radius gratis ongkir:
@@ -1053,12 +1113,36 @@ function applySettings(settings){
   STORE_SETTINGS.storeLng = (settings.Store_Longitude !== undefined && settings.Store_Longitude !== '') ? Number(settings.Store_Longitude) : null;
   STORE_SETTINGS.freeShipPromoActive = (settings.Free_Ship_Promo_Active === true || settings.Free_Ship_Promo_Active === 'TRUE' || settings.Free_Ship_Promo_Active === 'true');
   STORE_SETTINGS.freeShipPromoEndDate = settings.Free_Ship_Promo_End_Date || null;
+  // Syarat minimal belanja (Rp) untuk gratis ongkir -- ini aturan UTAMA yang
+  // dipakai untuk widget "Tambah RpX lagi untuk GRATIS ONGKIR" di keranjang.
+  STORE_SETTINGS.freeShipMinSpend = (settings.Free_Ship_Min_Spend !== undefined && settings.Free_Ship_Min_Spend !== '' && !isNaN(Number(settings.Free_Ship_Min_Spend)))
+    ? Number(settings.Free_Ship_Min_Spend) : 0;
   customerWithinFreeShipRadius = null; // reset, perlu dicek ulang tiap kali settings baru dimuat
   toggleFreeShipLocationButton();
+
+  // ---- Minimal belanja per pesanan (supaya tidak antar order super kecil) ----
+  STORE_SETTINGS.minimumOrder = (settings.Minimum_Order !== undefined && settings.Minimum_Order !== '' && !isNaN(Number(settings.Minimum_Order)))
+    ? Number(settings.Minimum_Order) : 0;
+
+  // ---- Sesi pengantaran batch ----
+  STORE_SETTINGS.deliverySlots = parseDeliverySlots_(settings.Delivery_Slots);
+  renderDeliverySlotOptions();
+
   refreshCartUI();
   if(document.getElementById('view-checkout').classList.contains('active')) renderCheckoutSummary();
 
   renderHeroReceipt();
+}
+
+// Parse JSON sesi pengantaran dari kolom Settings.Delivery_Slots -- kalau
+// kosong/rusak, otomatis fallback ke 3 sesi default supaya website tetap jalan.
+function parseDeliverySlots_(raw){
+  if(!raw) return DEFAULT_DELIVERY_SLOTS;
+  try{
+    const parsed = JSON.parse(raw);
+    if(Array.isArray(parsed) && parsed.length > 0) return parsed;
+  }catch(e){ /* biarkan fallback ke default di bawah */ }
+  return DEFAULT_DELIVERY_SLOTS;
 }
 
 // Hitung mundur promo real-time -- tanggal berakhirnya diatur admin lewat
@@ -1129,6 +1213,10 @@ function calculateShippingFee(){
     return { fee: 0, reason: 'radius' };
   }
 
+  if(STORE_SETTINGS.freeShipMinSpend > 0 && cartSubtotal() >= STORE_SETTINGS.freeShipMinSpend){
+    return { fee: 0, reason: 'minspend' };
+  }
+
   const itemCount = cartCount();
   if(STORE_SETTINGS.freeShipMinItems > 0 && itemCount >= STORE_SETTINGS.freeShipMinItems){
     return { fee: 0, reason: 'minitems' };
@@ -1141,6 +1229,7 @@ const FREESHIP_REASON_LABEL = {
   pickup: 'Ambil Sendiri',
   promo: 'Promo Gratis Ongkir',
   radius: 'Dalam Radius Gratis Ongkir',
+  minspend: 'Syarat Minimal Belanja Terpenuhi',
   minitems: 'Syarat Minimal Item Terpenuhi',
 };
 
@@ -1149,6 +1238,94 @@ function shippingFeeHtml(result){
     return `<span style="color:var(--green-dark); font-weight:800;">GRATIS 🎉</span> <span style="font-size:11px; color:var(--ink-soft);">(${FREESHIP_REASON_LABEL[result.reason]})</span>`;
   }
   return rupiah(result.fee);
+}
+
+/* ============================================================
+   WIDGET "TAMBAH RpX LAGI UNTUK GRATIS ONGKIR" + REKOMENDASI PRODUK
+   ============================================================
+   Tujuan: menaikkan rata-rata belanja (AOV) pelanggan dari kisaran
+   Rp40rb ke syarat gratis ongkir (default Rp60rb, diatur admin lewat
+   Pengaturan Toko > Ongkir & Pengiriman), dengan menyarankan produk
+   murah/pengisi keranjang yang mudah ditambahkan sekali klik.
+   ============================================================ */
+
+// Kata kunci produk "pengisi keranjang" yang umum dipakai untuk menutup
+// selisih ongkir gratis (telur, mie, snack, minuman, sabun, dll). Produk
+// yang cocok kata kunci ini diprioritaskan; sisanya diurutkan dari termurah.
+const FREESHIP_UPSELL_KEYWORDS = ['telur','mie','mi instan','snack','keripik','biskuit','minuman','teh','kopi','sabun','tisu','kecap','gula','permen','cokelat','sirup'];
+
+function freeShipUpsellProducts(limit){
+  const inCart = cart; // {id: qty}
+  const candidates = PRODUCTS.filter(p => p.stock > 0);
+  function isKeywordMatch(p){
+    const nm = p.name.toLowerCase();
+    return FREESHIP_UPSELL_KEYWORDS.some(k => nm.includes(k));
+  }
+  return candidates
+    .slice()
+    .sort((a,b)=>{
+      const ka = isKeywordMatch(a) ? 0 : 1;
+      const kb = isKeywordMatch(b) ? 0 : 1;
+      if(ka !== kb) return ka - kb; // produk kata kunci "pengisi keranjang" didahulukan
+      return a.price - b.price; // lalu termurah dulu supaya gampang ditambahkan
+    })
+    .slice(0, limit);
+}
+
+// Menghasilkan HTML widget gratis ongkir untuk ditempel di keranjang &
+// ringkasan checkout. Mengembalikan '' kalau fitur tidak relevan (pickup,
+// keranjang kosong, atau admin belum mengatur syarat minimal belanja).
+function freeShipProgressHtml(){
+  const minSpend = STORE_SETTINGS.freeShipMinSpend;
+  if(!minSpend || minSpend <= 0) return '';
+  if(checkoutData.shipping === 'pickup') return ''; // pickup selalu gratis, widget tidak relevan
+
+  const subtotal = cartSubtotal();
+  if(subtotal <= 0) return '';
+
+  const shipResult = calculateShippingFee();
+  if(shipResult.fee === 0){
+    return `<div class="freeship-widget freeship-done">🎉 <span>Gratis ongkir aktif untuk pesanan ini!</span></div>`;
+  }
+
+  const gap = Math.max(0, minSpend - subtotal);
+  const pct = Math.max(4, Math.min(100, Math.round((subtotal / minSpend) * 100)));
+  const picks = freeShipUpsellProducts(5);
+
+  return `
+    <div class="freeship-widget">
+      <p class="fw-text">🚚 Tambah <b>${rupiah(gap)}</b> lagi untuk <b>GRATIS ONGKIR!</b></p>
+      <div class="fw-bar"><div class="fw-bar-fill" style="width:${pct}%"></div></div>
+      ${picks.length ? `
+        <p class="fw-sub">Yuk lengkapi belanjaanmu</p>
+        <div class="fw-picks">
+          ${picks.map(p=>`
+            <button type="button" class="fw-pick" onclick="addToCart('${p.id}')">
+              <span class="fw-pick-emoji">${productImageHtml(p.emoji, p.name)}</span>
+              <span class="fw-pick-name">${p.name}</span>
+              <span class="fw-pick-price">${rupiah(p.price)}</span>
+              <span class="fw-pick-add">+ Tambah</span>
+            </button>
+          `).join('')}
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
+// Menghasilkan HTML peringatan minimal belanja per pesanan (mis. Rp15.000)
+// -- dipasang admin supaya tidak perlu mengantar order yang terlalu kecil.
+function minOrderWarningHtml(){
+  const minOrder = STORE_SETTINGS.minimumOrder;
+  const subtotal = cartSubtotal();
+  if(!minOrder || minOrder <= 0 || subtotal <= 0 || subtotal >= minOrder) return '';
+  const gap = minOrder - subtotal;
+  return `<div class="minorder-warning">⚠️ Minimal belanja <b>${rupiah(minOrder)}</b> per pesanan. Tambah <b>${rupiah(gap)}</b> lagi untuk bisa checkout.</div>`;
+}
+
+function isBelowMinimumOrder(){
+  const minOrder = STORE_SETTINGS.minimumOrder;
+  return minOrder > 0 && cartSubtotal() > 0 && cartSubtotal() < minOrder;
 }
 
 // Tampilkan/sembunyikan tombol "cek lokasi" di step pengiriman, tergantung
@@ -1238,7 +1415,7 @@ async function loadFromBackend(){
 let cart = {}; // {productId: qty}
 let currentDetailId = null;
 let currentCheckoutStep = 1;
-let checkoutData = {shipping:'delivery', payment:'Transfer Bank'};
+let checkoutData = {shipping:'delivery', payment:'Transfer Bank', deliveryDate:null, deliverySlot:null};
 let lastOrder = null;
 let ORDERS_DB = {}; // simulasi sheet ORDERS untuk demo tracking
 let dailyOrderCounter = 0;
@@ -1502,6 +1679,10 @@ function refreshCartUI(){
   document.getElementById('cart-subtotal').textContent = rupiah(subtotal);
   document.getElementById('cart-ongkir').innerHTML = shippingFeeHtml(shipResult);
   document.getElementById('cart-total').textContent = rupiah(subtotal+shipResult.fee);
+  document.getElementById('cart-minorder-warning').innerHTML = minOrderWarningHtml();
+  document.getElementById('cart-freeship-widget').innerHTML = freeShipProgressHtml();
+  const checkoutBtn = document.getElementById('cart-checkout-btn');
+  if(checkoutBtn) checkoutBtn.disabled = isBelowMinimumOrder();
 
   const linesWrap = document.getElementById('cart-lines');
   const entries = Object.entries(cart);
@@ -1622,6 +1803,11 @@ function switchTab(name){
    ============================================================ */
 function goCheckout(){
   if(cartCount()===0){ showToast('Keranjang masih kosong'); return; }
+  if(isBelowMinimumOrder()){
+    const gap = STORE_SETTINGS.minimumOrder - cartSubtotal();
+    showToast(`Minimal belanja ${rupiah(STORE_SETTINGS.minimumOrder)}. Tambah ${rupiah(gap)} lagi ya.`);
+    return;
+  }
   closeCart();
   currentCheckoutStep = 1;
   renderCheckoutSummary();
@@ -1639,10 +1825,15 @@ function renderCheckoutSummary(){
   document.getElementById('co-subtotal').textContent = rupiah(subtotal);
   document.getElementById('co-ongkir').innerHTML = shippingFeeHtml(shipResult);
   document.getElementById('co-total').textContent = rupiah(subtotal+shipResult.fee);
+  document.getElementById('co-minorder-warning').innerHTML = minOrderWarningHtml();
+  document.getElementById('co-freeship-widget').innerHTML = freeShipProgressHtml();
 }
 function goStep(n){
   if(n===2 && currentCheckoutStep===1){
     if(!validateStep1()) return;
+  }
+  if(n===3 && currentCheckoutStep===2){
+    if(!validateStep2()) return;
   }
   currentCheckoutStep = n;
   [1,2,3].forEach(i=>{
@@ -1670,7 +1861,69 @@ function selectShip(el){
   document.querySelectorAll('#ship-delivery, #ship-pickup').forEach(l=>l.classList.remove('selected'));
   el.closest('.radio-card').classList.add('selected');
   toggleFreeShipLocationButton();
+  toggleDeliverySlotBox();
   renderCheckoutSummary();
+}
+
+/* ============================================================
+   SESI PENGANTARAN (BATCH DELIVERY)
+   ============================================================
+   Supaya pesanan tidak diantar satu-satu tanpa sistem: pelanggan
+   memilih tanggal + salah satu sesi (mis. Pagi 08.00-11.00) yang
+   diatur admin lewat Pengaturan Toko > Ongkir & Pengiriman. Admin
+   lalu bisa menggabungkan semua pesanan di tanggal+sesi yang sama
+   jadi satu kali jalan antar.
+   ============================================================ */
+function toggleDeliverySlotBox(){
+  const box = document.getElementById('delivery-slot-box');
+  if(!box) return;
+  box.style.display = (checkoutData.shipping === 'pickup') ? 'none' : 'block';
+}
+
+function renderDeliverySlotOptions(){
+  const wrap = document.getElementById('delivery-slot-options');
+  const dateInput = document.getElementById('f-delivery-date');
+  if(!wrap || !dateInput) return;
+
+  // Tanggal minimal = hari ini, supaya pelanggan tidak bisa pilih tanggal lampau
+  const todayStr = new Date().toISOString().slice(0,10);
+  dateInput.min = todayStr;
+  if(!dateInput.value) dateInput.value = todayStr;
+
+  const slots = STORE_SETTINGS.deliverySlots && STORE_SETTINGS.deliverySlots.length ? STORE_SETTINGS.deliverySlots : DEFAULT_DELIVERY_SLOTS;
+  wrap.innerHTML = slots.map((s,i)=>`
+    <label class="slot-option" id="slot-opt-${i}">
+      <input type="radio" name="delivery-slot" value="${s.label}" onchange="selectDeliverySlot('${s.label}', ${i})">
+      <span><span class="so-title">${s.label}</span> — <span class="so-time">${s.start}–${s.end}</span></span>
+    </label>
+  `).join('');
+}
+
+function selectDeliverySlot(label, idx){
+  checkoutData.deliverySlot = label;
+  document.querySelectorAll('.slot-option').forEach(l=>l.classList.remove('selected'));
+  const el = document.getElementById('slot-opt-'+idx);
+  if(el) el.classList.add('selected');
+  document.getElementById('err-delivery-slot').style.display = 'none';
+}
+
+function onDeliveryDateChange(){
+  checkoutData.deliveryDate = document.getElementById('f-delivery-date').value;
+  document.getElementById('err-delivery-date').style.display = 'none';
+}
+
+function validateStep2(){
+  if(checkoutData.shipping === 'pickup') return true; // pickup tidak butuh sesi pengantaran
+  let ok = true;
+  const dateVal = document.getElementById('f-delivery-date').value;
+  document.getElementById('err-delivery-date').style.display = dateVal ? 'none' : 'block';
+  if(!dateVal) ok = false; else checkoutData.deliveryDate = dateVal;
+
+  const slotOk = !!checkoutData.deliverySlot;
+  document.getElementById('err-delivery-slot').style.display = slotOk ? 'none' : 'block';
+  if(!slotOk) ok = false;
+
+  return ok;
 }
 function selectPay(el){
   checkoutData.payment = el.value;
@@ -1725,6 +1978,19 @@ function generateOrderNumber(){
 
 async function placeOrder(){
   const subtotal = cartSubtotal();
+
+  // Jaga-jaga terakhir (selain validasi per-step) supaya pesanan di bawah
+  // syarat minimal belanja atau tanpa sesi pengantaran tidak lolos.
+  if(isBelowMinimumOrder()){
+    showToast(`Minimal belanja ${rupiah(STORE_SETTINGS.minimumOrder)} untuk checkout.`);
+    return;
+  }
+  if(checkoutData.shipping !== 'pickup' && (!checkoutData.deliveryDate || !checkoutData.deliverySlot)){
+    showToast('Pilih dulu tanggal & sesi pengantaran.');
+    goStep(2);
+    return;
+  }
+
   const shipResult = calculateShippingFee();
   const ongkir = shipResult.fee;
   const total = subtotal + ongkir;
@@ -1754,6 +2020,8 @@ async function placeOrder(){
           customer, shipping: checkoutData.shipping, payment: checkoutData.payment,
           items: Object.entries(cart).map(([id,qty])=>({product_id:id, qty})),
           withinFreeShipRadius: customerWithinFreeShipRadius === true,
+          delivery_date: checkoutData.shipping === 'pickup' ? '' : checkoutData.deliveryDate,
+          delivery_slot: checkoutData.shipping === 'pickup' ? '' : checkoutData.deliverySlot,
         })
       });
       const data = await res.json();
@@ -1777,6 +2045,8 @@ async function placeOrder(){
   const order = {
     id: orderNum, date: now, customer,
     shipping: checkoutData.shipping, payment: checkoutData.payment,
+    deliveryDate: checkoutData.shipping === 'pickup' ? null : checkoutData.deliveryDate,
+    deliverySlot: checkoutData.shipping === 'pickup' ? null : checkoutData.deliverySlot,
     items: Object.entries(cart).map(([id,qty])=>({id, name:getProduct(id).name, qty, price:getProduct(id).price})),
     subtotal, ongkir, total, status: 'dibuat',
     needsProof: checkoutData.payment !== 'COD', // Transfer Bank & QRIS wajib upload bukti
@@ -1790,8 +2060,32 @@ async function placeOrder(){
   if(submitBtn){ submitBtn.disabled = false; submitBtn.textContent = 'Buat Pesanan ✓'; }
   document.getElementById('success-order-num').textContent = '#' + orderNum;
   document.getElementById('success-total').textContent = rupiah(total);
+  const deliveryInfoEl = document.getElementById('success-delivery-info');
+  if(order.shipping === 'pickup'){
+    deliveryInfoEl.style.display = 'block';
+    deliveryInfoEl.textContent = '🏪 Ambil sendiri di toko';
+  } else if(order.deliveryDate && order.deliverySlot){
+    const slotInfo = (STORE_SETTINGS.deliverySlots||DEFAULT_DELIVERY_SLOTS).find(s=>s.label===order.deliverySlot);
+    const timeRange = slotInfo ? ` (${slotInfo.start}–${slotInfo.end})` : '';
+    deliveryInfoEl.style.display = 'block';
+    deliveryInfoEl.textContent = `🚚 Diantar batch: ${formatDeliveryDate(order.deliveryDate)} · Sesi ${order.deliverySlot}${timeRange}`;
+  } else {
+    deliveryInfoEl.style.display = 'none';
+  }
   initProofSection();
   showView('success');
+}
+
+function formatDeliveryDate(dateStr){
+  try{
+    // dateStr bisa berupa "YYYY-MM-DD" (dari input form) ATAU string
+    // datetime lengkap dari Sheets (mis. "2026-09-05T00:00:00.000Z") --
+    // ambil bagian tanggalnya saja supaya konsisten.
+    const datePart = String(dateStr).slice(0,10);
+    const d = new Date(datePart + 'T00:00:00');
+    if(isNaN(d.getTime())) return dateStr;
+    return d.toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long' });
+  }catch(e){ return dateStr; }
 }
 
 // Tampilkan/sembunyikan form upload bukti pembayaran di halaman sukses
@@ -1903,6 +2197,9 @@ function confirmWhatsapp(){
   if(!number){ showToast('Nomor WhatsApp admin belum diatur'); return; }
 
   let msg = `Halo, saya ingin konfirmasi pesanan ${lastOrder.id} dengan total ${rupiah(lastOrder.total)}.`;
+  if(lastOrder.shipping !== 'pickup' && lastOrder.deliveryDate && lastOrder.deliverySlot){
+    msg += ` Mohon diantar pada ${formatDeliveryDate(lastOrder.deliveryDate)}, sesi ${lastOrder.deliverySlot}.`;
+  }
   if(lastOrder.payment === 'Transfer Bank'){
     msg += ` Saya sudah/akan transfer ke rekening ${STORE_SETTINGS.bank.name||''} a.n. ${STORE_SETTINGS.bank.holder||''}.`;
   }
@@ -1946,15 +2243,19 @@ function handleTrackProofUpload(event, orderId){
 
 let currentTrackedOrder = null; // {order, items} -- dipakai untuk generate struk PDF
 
-function renderTimeline(orderId, customerName, total, payment, steps, proofInfo, paymentStatus){
+function renderTimeline(orderId, customerName, total, payment, steps, proofInfo, paymentStatus, deliveryDate, deliverySlot){
   const dotHtml = s => s==='done' ? '✓' : (s==='current' ? '●' : '○');
   const receiptButton = paymentStatus === 'LUNAS'
     ? `<button class="btn btn-dark btn-block" style="margin-top:14px;" onclick="downloadReceipt()">🧾 Download Struk Belanja (PDF)</button>`
     : '';
+  const deliveryInfo = (deliveryDate && deliverySlot)
+    ? `<p style="font-size:12.5px; font-weight:700; color:var(--green-dark); background:var(--green-light); border-radius:8px; padding:8px 12px; margin:-6px 0 14px; display:inline-block;">🚚 Diantar batch: ${formatDeliveryDate(deliveryDate)} · Sesi ${deliverySlot}</p>`
+    : '';
   document.getElementById('track-result').innerHTML = `
     <div class="form-card">
       <h3>Pesanan #${orderId}</h3>
-      <p style="font-size:13px;color:var(--ink-soft);margin-bottom:18px;">${customerName} · Total ${rupiah(total)} · ${payment}</p>
+      <p style="font-size:13px;color:var(--ink-soft);margin-bottom:10px;">${customerName} · Total ${rupiah(total)} · ${payment}</p>
+      ${deliveryInfo}
       <ul class="timeline">
         ${steps.map(s=>`
           <li class="${s.state}">
@@ -1988,7 +2289,7 @@ async function trackOrder(){
         renderTimeline(
           data.order.Order_ID, data.order.Customer_Name, Number(data.order.Grand_Total), data.order.Payment_Method, data.timeline,
           { status: data.order.Payment_Proof_Status, url: data.order.Payment_Proof_URL, note: data.order.Payment_Proof_Note },
-          data.order.Payment_Status
+          data.order.Payment_Status, data.order.Delivery_Date, data.order.Delivery_Slot
         );
       } else {
         resultWrap.innerHTML = notFoundHtml;
@@ -2015,7 +2316,7 @@ async function trackOrder(){
     {title:'Sedang diproses', time:fmt(t2), state:'current'},
     {title:'Sedang dikirim', time:'Menunggu', state:''},
     {title:'Selesai', time:'Menunggu', state:''},
-  ], { status: order.needsProof ? 'BELUM_UPLOAD' : 'TIDAK_PERLU' });
+  ], { status: order.needsProof ? 'BELUM_UPLOAD' : 'TIDAK_PERLU' }, null, order.deliveryDate, order.deliverySlot);
 }
 
 // ---- Struk belanja PDF (dibuat langsung di browser pakai jsPDF) ----
@@ -2097,6 +2398,8 @@ function showToast(msg){
    ============================================================ */
 renderHome();
 refreshCartUI();
+renderDeliverySlotOptions();
+toggleDeliverySlotBox();
 loadFromBackend();
 </script>
 </body>
