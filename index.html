@@ -515,8 +515,29 @@
   @media (max-width:560px){
     .hero h1{font-size:32px;}
     .cat-grid{grid-template-columns:repeat(3,1fr);}
-    .prod-grid{grid-template-columns:repeat(2,1fr);}
+    .prod-grid{grid-template-columns:repeat(2,1fr); gap:12px;}
     .footer-grid{grid-template-columns:1fr;}
+
+    /* Samakan ukuran kartu produk di mode HP untuk SEMUA grid produk
+       (Home, Belanja, Kategori, Promo -- bukan cuma yang sudah dikasih
+       class "compact" secara manual) supaya sepadat/sekompak tampilan
+       kartu produk di panel Admin (Kasir POS): thumbnail proporsional,
+       teks & padding lebih kecil, tombol lebih ringkas -- sebelumnya di
+       mode HP kartu produk di halaman Belanja/Kategori/Promo (pakai
+       #shop-grid) masih memakai ukuran besar versi desktop sehingga
+       terasa jauh lebih besar/panjang dibanding kartu produk di Admin. */
+    .prod-card .thumb{font-size:38px;}
+    .prod-body{padding:9px 11px 11px; gap:4px;}
+    .prod-cat{font-size:9.5px;}
+    .prod-name{font-size:12.5px; min-height:30px; line-height:1.25;}
+    .prod-rating{font-size:11px;}
+    .price-now{font-size:14px;}
+    .price-old{font-size:11px;}
+    .prod-foot{margin-top:6px;}
+    .qty-stepper button{width:22px; height:22px;}
+    .qty-stepper span{width:20px; font-size:12px;}
+    .add-cart-btn{width:29px; height:29px; font-size:14px; border-radius:8px;}
+    .stamp-badge{font-size:10px; padding:3px 8px; top:8px; left:8px;}
 
     /* Cegah header meluber ke luar layar di HP kecil (mis. 390px) --
        kecilkan logo, jarak antar elemen, dan ukuran tombol ikon. */
@@ -549,7 +570,7 @@
 <div class="topbar">
   <div class="container">
     <span>📍 Melayani area sekitar toko — pengiriman hari ini untuk order sebelum jam 15.00</span>
-    <span>💬 WhatsApp Admin: <span id="topbar-wa">0895-4026-65455</span></span>
+    <span>💬 WhatsApp Admin: <span id="topbar-wa">0895-4026-45655</span></span>
   </div>
 </div>
 
@@ -608,7 +629,7 @@
       <div>
         <span class="eyebrow-tag">🏷️ Toko Kelontong Online No.1 di Sekitarmu</span>
         <h1>Belanja kebutuhan rumah,<br><em>jadi lebih mudah.</em></h1>
-        <p class="lede">Sembako, susu, popok bayi, sampai perlengkapan bersih-bersih rumah pesan lewat HP, kami antar sampai depan pintu hari ini juga.</p>
+        <p class="lede">Sembako, susu, popok bayi, sampai perlengkapan bersih-bersih rumah pesan lewat HP, kami antar sampai dMepan pintu hari ini juga.</p>
         <div class="hero-ctas">
           <button class="btn btn-primary" onclick="showView('shop')">Belanja Sekarang →</button>
           <button class="btn btn-ghost" onclick="showView('track')">Lacak Pesanan Saya</button>
@@ -914,7 +935,7 @@
   <div class="container prose-page">
     <h1>Tentang Klik Beli Aja Mart</h1>
     <p>Klik Beli Aja Mart adalah toko kelontong online yang melayani kebutuhan sembako dan rumah tangga harian dari beras dan minyak goreng, susu untuk si kecil dan ibu hamil, popok bayi, sampai perlengkapan kebersihan rumah.</p>
-    <p>Kami percaya belanja kebutuhan rumah tidak perlu ribet. Cukup buka website, pilih produk, dan pesanan diantar ke rumahmu hari itu juga cocok untuk ibu rumah tangga, keluarga muda, orang tua dengan bayi, sampai karyawan yang sibuk sepanjang hari.</p>
+    <p>Kami percaya belanja kebutuhan rumah tidak perlu ribet. Cukup buka website, pilih produk, dan pesanan diantar ke rumahmu hari itu juga. Cocok untuk ibu rumah tangga, keluarga muda, orang tua dengan bayi, sampai karyawan yang sibuk sepanjang hari.</p>
     <p>Setiap pesanan diproses dengan cermat: stok selalu diperbarui, harga transparan, dan tim kami siap membantu lewat WhatsApp kapan pun kamu butuh.</p>
   </div>
 </section>
@@ -926,7 +947,7 @@
     <p>Ada pertanyaan soal produk, stok, atau pesananmu? Tim kami siap membantu setiap hari.</p>
     <div class="contact-cards">
       <div class="contact-card"><div class="ic">💬</div><div class="t">WhatsApp</div><div class="d" id="contact-wa">0895-4026-65455</div></div>
-      <div class="contact-card"><div class="ic">📍</div><div class="t">Alamat Toko</div><div class="d" id="contact-address">Taman Adiyasa Blok N 12 No 11, Kab. Tangerang</div></div>
+      <div class="contact-card"><div class="ic">📍</div><div class="t">Alamat Toko</div><div class="d" id="contact-address">Taman Adiyasa Blok N 12 No 11, Kabupaten Tangerang</div></div>
       <div class="contact-card"><div class="ic">🕒</div><div class="t">Jam Operasional</div><div class="d" id="contact-hours">Setiap hari, 07.00 – 21.00</div></div>
       <div class="contact-card"><div class="ic">📧</div><div class="t">Email</div><div class="d" id="contact-email">klikbeliaja@gmail.com</div></div>
     </div>
