@@ -433,7 +433,18 @@
   .slot-option .so-time{color:var(--ink-soft); font-size:12px;}
   .field-hint{font-size:11.5px; color:var(--ink-soft); margin-top:6px; line-height:1.4;}
 
-  .order-summary-card{background:var(--paper-card); border:1px solid var(--line); border-radius:18px; padding:22px; height:fit-content; position:sticky; top:118px; box-shadow:var(--shadow-sm);}
+  .order-summary-card{
+    background:var(--paper-card); border:1px solid var(--line); border-radius:18px; padding:22px;
+    height:fit-content; position:sticky; top:118px; box-shadow:var(--shadow-sm);
+    /* Sebelumnya tidak ada batas tinggi -- kalau isi keranjang banyak & jendela
+       browser pendek (tablet landscape, laptop kecil), kartu ini bisa jadi lebih
+       tinggi dari layar, dan karena tetap sticky, bagian ATASNYA (judul "Ringkasan
+       Pesanan" + baris produk pertama) ikut ketarik ke atas sampai kegeser di
+       belakang header saat discroll. max-height + scroll internal mencegah itu:
+       kartu tidak akan pernah lebih tinggi dari layar yang tersisa di bawah header. */
+    max-height:calc(100vh - 134px);
+    overflow-y:auto;
+  }
   .order-summary-card h3{font-size:16px; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--line);}
   .os-line{display:flex; justify-content:space-between; font-size:13px; padding:6px 0;}
   .os-line .nm{color:var(--ink-soft);}
@@ -505,8 +516,12 @@
     .shop-layout{grid-template-columns:1fr;}
     .filter-box{position:static;}
     .detail-wrap{grid-template-columns:1fr;}
-    .checkout-wrap{grid-template-columns:1fr;}
-    .order-summary-card{position:static;}
+    .checkout-wrap{grid-template-columns:1fr; gap:24px;}
+    /* Di mode 1 kolom (tablet & HP) kartu ringkasan ikut alur halaman biasa
+       (bukan sticky lagi), jadi batas max-height/overflow-y di atas harus
+       dilepas juga -- kalau tidak, isinya malah kepotong & muncul scrollbar
+       kecil yang tidak perlu padahal halamannya sendiri sudah bisa discroll. */
+    .order-summary-card{position:static; max-height:none; overflow-y:visible;}
     .feat-grid{grid-template-columns:repeat(2,1fr); gap:14px 0;}
     .footer-grid{grid-template-columns:1fr 1fr;}
     .contact-cards{grid-template-columns:1fr;}
@@ -549,6 +564,21 @@
     .hamburger-btn, .header-actions .icon-btn{padding:8px; font-size:16px; border-radius:10px;}
     .header-actions{gap:4px; padding-right:2px;}
 
+    /* Rapikan tampilan CHECKOUT (step 1/2/3 + Ringkasan Pesanan) di HP
+       sempit -- sebelumnya memakai padding/ukuran versi desktop apa
+       adanya, jadi terasa sempit/padat di layar <=560px. */
+    .checkout-wrap{padding:24px 0 48px; gap:18px;}
+    .steps-bar{gap:6px; margin-bottom:20px;}
+    .step-pill{font-size:11px; padding:9px 4px;}
+    .form-card{padding:18px;}
+    .form-card h3{font-size:15.5px; margin-bottom:14px;}
+    .radio-card{padding:12px; gap:10px;}
+    .radio-card .rc-title{font-size:13px;}
+    .radio-card .rc-sub{font-size:11.5px;}
+    .slot-option{padding:10px 11px;}
+    .order-summary-card{padding:16px;}
+    .order-summary-card h3{font-size:15px; margin-bottom:12px; padding-bottom:10px;}
+
     /* Perbesar jarak antar section di beranda mode HP -- sebelumnya
        section-section beruntun (Promo Hari Ini, Produk Terlaris) memakai
        padding-top:0 supaya tidak dobel jarak di desktop, tapi di layar
@@ -586,7 +616,7 @@
     </a>
     <div class="search-wrap" id="desktop-search-wrap">
       <span class="ic">🔍</span>
-      <input id="global-search" type="text" placeholder="Cari sembako, susu, pampers, dll..." onkeydown="if(event.key==='Enter'){searchAndGo(this.value)}">
+      <input id="global-search" type="text" placeholder="Cari sembako dan kebutuhanmu" onkeydown="if(event.key==='Enter'){searchAndGo(this.value)}">
     </div>
     <div class="header-actions">
       <button class="icon-btn mobile-search-btn" title="Cari" onclick="toggleMobileSearch()">🔍</button>
@@ -598,7 +628,7 @@
   </div>
   <div class="mobile-search-row" id="mobile-search-row">
     <span class="ic">🔍</span>
-    <input id="global-search-mobile" type="text" placeholder="Cari sembako, susu, pampers, dll..." onkeydown="if(event.key==='Enter'){searchAndGo(this.value)}">
+    <input id="global-search-mobile" type="text" placeholder="Cari sembako dan kebutuhanmu" onkeydown="if(event.key==='Enter'){searchAndGo(this.value)}">
   </div>
 </header>
 <!-- Menu mobile & overlay-nya sengaja diletakkan DI LUAR <header>. Header
@@ -973,7 +1003,7 @@
   <div class="container footer-grid">
     <div>
       <h4 style="color:#fff; font-size:18px; text-transform:none; letter-spacing:0;">Klik Beli Aja Mart</h4>
-      <p>Semua kebutuhan rumah, belanja lebih mudah. Sembako, susu, popok bayi dan kebutuhan harian diantar langsung ke rumahmu.</p>
+      <p>Semua kebutuhan rumah, belanja lebih mudah. Sembako, susu, popok bayi, dan kebutuhan harian diantar langsung ke rumahmu.</p>
     </div>
     <div>
       <h4>Belanja</h4>
