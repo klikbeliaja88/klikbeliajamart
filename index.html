@@ -949,8 +949,8 @@
 <section class="view" id="view-about">
   <div class="container prose-page">
     <h1>Tentang Klik Beli Aja Mart</h1>
-    <p>Klik Beli Aja Mart adalah toko kelontong online yang melayani kebutuhan sembako dan rumah tangga harian — dari beras dan minyak goreng, susu untuk si kecil dan ibu hamil, popok bayi, sampai perlengkapan kebersihan rumah.</p>
-    <p>Kami percaya belanja kebutuhan rumah tidak perlu ribet. Cukup buka website, pilih produk, dan pesanan diantar ke rumahmu hari itu juga — cocok untuk ibu rumah tangga, keluarga muda, orang tua dengan bayi, sampai karyawan yang sibuk sepanjang hari.</p>
+    <p>Klik Beli Aja Mart adalah toko kelontong online yang melayani kebutuhan sembako dan rumah tangga harian dari beras dan minyak goreng, susu untuk si kecil dan ibu hamil, popok bayi, sampai perlengkapan kebersihan rumah.</p>
+    <p>Kami percaya belanja kebutuhan rumah tidak perlu ribet. Cukup buka website, pilih produk, dan pesanan diantar ke rumahmu hari itu juga. Cocok untuk ibu rumah tangga, keluarga muda, orang tua dengan bayi, sampai karyawan yang sibuk sepanjang hari.</p>
     <p>Setiap pesanan diproses dengan cermat: stok selalu diperbarui, harga transparan, dan tim kami siap membantu lewat WhatsApp kapan pun kamu butuh.</p>
   </div>
 </section>
@@ -962,7 +962,7 @@
     <p>Ada pertanyaan soal produk, stok, atau pesananmu? Tim kami siap membantu setiap hari.</p>
     <div class="contact-cards">
       <div class="contact-card"><div class="ic">💬</div><div class="t">WhatsApp</div><div class="d" id="contact-wa">0895-4026-65455</div></div>
-      <div class="contact-card"><div class="ic">📍</div><div class="t">Alamat Toko</div><div class="d" id="contact-address">Taman Adiyasa Blok N 12 No 11 Kabupaten Tangerang</div></div>
+      <div class="contact-card"><div class="ic">📍</div><div class="t">Alamat Toko</div><div class="d" id="contact-address">Taman Adiyasa Blok N 12 No 11, Kabupaten Tangerang</div></div>
       <div class="contact-card"><div class="ic">🕒</div><div class="t">Jam Operasional</div><div class="d" id="contact-hours">Setiap hari, 07.00 – 21.00</div></div>
       <div class="contact-card"><div class="ic">📧</div><div class="t">Email</div><div class="d" id="contact-email">klikbeliaja88@gmail.com</div></div>
     </div>
@@ -1737,8 +1737,18 @@ function toggleMobileSearch(){
    ============================================================ */
 function addToCart(id){
   const p = getProduct(id);
-  if(p.stock===0) return;
-  cart[id] = (cart[id]||0)+1;
+  if(!p || p.stock===0) return;
+  const current = cart[id]||0;
+  // Sebelumnya fungsi ini cuma memblokir kalau stok TOTAL 0, tapi tidak
+  // pernah mengecek jumlah yang SUDAH ada di keranjang -- beda dengan
+  // changeQty() (stepper di keranjang) yang sudah dibatasi Math.min(...,
+  // p.stock). Akibatnya tombol "+" di kartu produk bisa diklik berkali-kali
+  // sampai qty di keranjang melebihi stok yang tersedia (over-selling).
+  if(current >= p.stock){
+    showToast(`Stok ${p.name} tersisa ${p.stock}, sudah maksimal di keranjang.`);
+    return;
+  }
+  cart[id] = current+1;
   refreshCartUI();
   showToast(`${p.name} ditambahkan ke keranjang`);
 }
@@ -1935,7 +1945,23 @@ function goStep(n){
     pill.classList.toggle('done', i<n);
   });
   renderCheckoutSummary();
-  window.scrollTo({top:0, behavior:'auto'});
+  scrollCheckoutToTop();
+}
+/* Scroll ke bagian atas KARTU STEP checkout, bukan ke paling atas
+   halaman. Sebelumnya pakai window.scrollTo({top:0}) yang men-scroll
+   ke atas HALAMAN (di atas topbar hijau + header sticky + banner
+   "Checkout"), jadi begitu pindah step, konten step yang baru
+   (mis. Step 3 Pembayaran) kegeser ke bawah layar dan kelihatan
+   "kosong" sampai di-scroll manual. Sekarang discroll pas ke posisi
+   steps-bar, dikurangi tinggi header sticky, supaya kartu step yang
+   aktif langsung penuh kelihatan di layar. */
+function scrollCheckoutToTop(){
+  const target = document.querySelector('.steps-bar');
+  if(!target){ window.scrollTo({top:0, behavior:'auto'}); return; }
+  const headerEl = document.querySelector('header.site');
+  const headerOffset = headerEl ? headerEl.offsetHeight : 0;
+  const targetY = target.getBoundingClientRect().top + window.pageYOffset - headerOffset - 12;
+  window.scrollTo({top: Math.max(targetY, 0), behavior:'auto'});
 }
 function validateStep1(){
   let ok = true;
@@ -2076,6 +2102,18 @@ function generateOrderNumber(){
 
 async function placeOrder(){
   const subtotal = cartSubtotal();
+
+  // Jaga-jaga: isBelowMinimumOrder() sengaja mengabaikan subtotal===0
+  // (biar tidak muncul peringatan "minimal belanja" saat keranjang
+  // memang belum diisi sama sekali). Tapi itu artinya kalau fungsi ini
+  // sampai terpanggil dengan keranjang kosong, gerbang minimal belanja
+  // di bawah ikut tidak aktif dan pesanan Rp0 tanpa barang bisa lolos.
+  // Makanya keranjang kosong dicek eksplisit di sini duluan.
+  if(cartCount()===0){
+    showToast('Keranjang masih kosong.', true);
+    showView('shop');
+    return;
+  }
 
   // Bukti pembayaran WAJIB utk Transfer Bank & QRIS -- pesanan tidak
   // boleh dibuat sama sekali sebelum bukti dilampirkan (COD dikecualikan
