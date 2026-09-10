@@ -364,7 +364,7 @@
   .fw-picks{display:flex; gap:8px; overflow-x:auto; padding-bottom:2px;}
   .fw-pick{flex:0 0 auto; width:92px; background:#fff; border:1.5px solid var(--line); border-radius:12px; padding:8px; text-align:left; cursor:pointer; font-family:inherit;}
   .fw-pick:hover{border-color:var(--green);}
-  .fw-pick-emoji{display:flex; align-items:center; justify-content:center; width:100%; height:44px; font-size:22px; background:var(--green-light); border-radius:8px; overflow:hidden;}
+  .fw-pick-emoji{display:flex; align-items:center; justify-content:center; width:100%; height:44px; font-size:22px; background:var(--green-light); border-radius:8px; overflow:hidden; position:relative;}
   .fw-pick-name{display:block; font-size:11px; font-weight:700; margin-top:6px; line-height:1.25; height:28px; overflow:hidden;}
   .fw-pick-price{display:block; font-size:11px; color:var(--green-dark); font-weight:700; margin-top:2px;}
   .fw-pick-add{display:block; font-size:10.5px; color:#fff; background:var(--green); text-align:center; border-radius:6px; padding:3px 0; margin-top:6px; font-weight:700;}
@@ -569,8 +569,8 @@
 
 <div class="topbar">
   <div class="container">
-    <span>📍 Melayani area sekitar toko pengiriman hari ini, untuk order sebelum jam 15.00</span>
-    <span>💬 WhatsApp Admin: <span id="topbar-wa">0895-4026-45655</span></span>
+    <span>📍 Melayani area sekitar toko pengiriman hari ini untuk order sebelum jam 15.00</span>
+    <span>💬 WhatsApp Admin: <span id="topbar-wa">0895-4026-65455</span></span>
   </div>
 </div>
 
@@ -586,7 +586,7 @@
     </a>
     <div class="search-wrap" id="desktop-search-wrap">
       <span class="ic">🔍</span>
-      <input id="global-search" type="text" placeholder="Cari sembako dll..." onkeydown="if(event.key==='Enter'){searchAndGo(this.value)}">
+      <input id="global-search" type="text" placeholder="Cari sembako, susu, pampers, dll..." onkeydown="if(event.key==='Enter'){searchAndGo(this.value)}">
     </div>
     <div class="header-actions">
       <button class="icon-btn mobile-search-btn" title="Cari" onclick="toggleMobileSearch()">🔍</button>
@@ -864,6 +864,20 @@
             <span class="ic">💵</span>
             <span><span class="rc-title">Bayar di Tempat (COD)</span><br><span class="rc-sub">Bayar tunai saat pesanan tiba</span></span>
           </label>
+
+          <div class="field" id="proof-upload-box-step3" style="margin-top:16px; padding:14px; background:var(--paper); border:1.5px dashed var(--ink); border-radius:8px;">
+            <label style="font-weight:700;">📎 Upload Bukti Pembayaran (wajib)</label>
+            <p class="field-hint" style="margin-top:-2px; margin-bottom:10px;">Selesaikan pembayaran terlebih dahulu, lalu lampirkan foto/screenshot bukti transfer atau QRIS di sini. Pesanan tidak bisa dibuat tanpa bukti pembayaran.</p>
+            <div style="display:flex; gap:12px; align-items:flex-start; flex-wrap:wrap;">
+              <div id="proof-preview-step3" style="width:110px; height:110px; flex-shrink:0; border:1.5px solid var(--ink); border-radius:6px; background:var(--paper-card); display:flex; align-items:center; justify-content:center; font-size:11px; color:var(--ink-soft); overflow:hidden; text-align:center;">Belum ada foto</div>
+              <div style="flex:1; min-width:160px;">
+                <input type="file" id="proof-file-input-step3" accept="image/*" onchange="handleProofFileSelectStep3(event)" style="font-size:12.5px; max-width:100%;">
+                <p id="proof-file-status-step3" style="font-size:11.5px; color:var(--ink-soft); margin-top:6px;"></p>
+              </div>
+            </div>
+            <div class="field-error" id="err-proof-step3">Bukti pembayaran wajib dilampirkan untuk metode Transfer Bank/QRIS.</div>
+          </div>
+
           <div class="step-actions">
             <button class="btn btn-ghost" style="color:var(--ink); border-color:var(--ink);" onclick="goStep(2)">← Kembali</button>
             <button class="btn btn-primary" onclick="placeOrder()">Buat Pesanan ✓</button>
@@ -896,8 +910,8 @@
       <p id="success-delivery-info" style="display:none; font-size:13px; font-weight:700; color:var(--green-dark); background:var(--green-light); border-radius:10px; padding:10px 14px; margin-top:10px;"></p>
 
       <div id="proof-upload-section" style="display:none; text-align:left; margin-top:18px; padding:16px; background:var(--paper); border:1.5px dashed var(--ink); border-radius:8px;">
-        <p style="font-size:13.5px; font-weight:700; margin:0 0 4px;">📎 Upload Bukti Pembayaran</p>
-        <p style="font-size:12px; color:var(--ink-soft); margin:0 0 10px;">Pesanan baru diproses admin setelah bukti pembayaran ini diverifikasi.</p>
+        <p style="font-size:13.5px; font-weight:700; margin:0 0 4px;">📎 Bukti Pembayaran</p>
+        <p style="font-size:12px; color:var(--ink-soft); margin:0 0 10px;">Bukti yang kamu lampirkan tadi sedang dikirim otomatis. Pesanan baru diproses admin setelah bukti ini diverifikasi. Kalau pengiriman gagal, upload ulang lewat tombol di bawah.</p>
         <div id="proof-preview" style="width:120px; height:120px; border:1.5px solid var(--ink); border-radius:6px; background:var(--paper-card); display:flex; align-items:center; justify-content:center; font-size:11.5px; color:var(--ink-soft); overflow:hidden; margin-bottom:10px; text-align:center;">Belum ada foto</div>
         <input type="file" id="proof-file-input" accept="image/*" onchange="handleProofUpload(event)" style="font-size:12.5px; max-width:100%;">
         <p id="proof-status" style="font-size:12px; margin-top:8px; font-weight:600;"></p>
@@ -907,7 +921,8 @@
       <div style="display:flex; flex-direction:column; gap:10px; margin-top:8px;">
         <button class="btn btn-primary btn-block" onclick="confirmWhatsapp()">💬 Konfirmasi via WhatsApp</button>
         <button class="btn btn-dark btn-block" onclick="goTrackOrder()">Cek Status Pesanan</button>
-        <button class="btn btn-ghost btn-block" style="color:var(--ink); border-color:var(--ink);" onclick="showView('home')">Kembali ke Beranda</button>
+        <button class="btn btn-ghost btn-block" id="btn-back-home" style="color:var(--ink); border-color:var(--ink);" onclick="showView('home')">Kembali ke Beranda</button>
+        <p id="proof-exit-lock-notice" style="display:none; font-size:11.5px; color:var(--stamp); text-align:center; margin:2px 0 0;">⏳ Mohon tunggu, bukti pembayaran sedang/wajib dikirim dulu sebelum bisa kembali ke beranda.</p>
       </div>
     </div>
   </div>
@@ -934,8 +949,8 @@
 <section class="view" id="view-about">
   <div class="container prose-page">
     <h1>Tentang Klik Beli Aja Mart</h1>
-    <p>Klik Beli Aja Mart adalah toko kelontong online yang melayani kebutuhan sembako dan rumah tangga harian dari beras dan minyak goreng, susu untuk si kecil dan ibu hamil, popok bayi, sampai perlengkapan kebersihan rumah.</p>
-    <p>Kami percaya belanja kebutuhan rumah tidak perlu ribet. Cukup buka website, pilih produk, dan pesanan diantar ke rumahmu hari itu juga. Cocok untuk ibu rumah tangga, keluarga muda, orang tua dengan bayi, sampai karyawan yang sibuk sepanjang hari.</p>
+    <p>Klik Beli Aja Mart adalah toko kelontong online yang melayani kebutuhan sembako dan rumah tangga harian — dari beras dan minyak goreng, susu untuk si kecil dan ibu hamil, popok bayi, sampai perlengkapan kebersihan rumah.</p>
+    <p>Kami percaya belanja kebutuhan rumah tidak perlu ribet. Cukup buka website, pilih produk, dan pesanan diantar ke rumahmu hari itu juga — cocok untuk ibu rumah tangga, keluarga muda, orang tua dengan bayi, sampai karyawan yang sibuk sepanjang hari.</p>
     <p>Setiap pesanan diproses dengan cermat: stok selalu diperbarui, harga transparan, dan tim kami siap membantu lewat WhatsApp kapan pun kamu butuh.</p>
   </div>
 </section>
@@ -947,7 +962,7 @@
     <p>Ada pertanyaan soal produk, stok, atau pesananmu? Tim kami siap membantu setiap hari.</p>
     <div class="contact-cards">
       <div class="contact-card"><div class="ic">💬</div><div class="t">WhatsApp</div><div class="d" id="contact-wa">0895-4026-65455</div></div>
-      <div class="contact-card"><div class="ic">📍</div><div class="t">Alamat Toko</div><div class="d" id="contact-address">Taman Adiyasa Blok N 12 No 11, Kabupaten Tangerang</div></div>
+      <div class="contact-card"><div class="ic">📍</div><div class="t">Alamat Toko</div><div class="d" id="contact-address">Taman Adiyasa Blok N 12 No 11 Kabupaten Tangerang</div></div>
       <div class="contact-card"><div class="ic">🕒</div><div class="t">Jam Operasional</div><div class="d" id="contact-hours">Setiap hari, 07.00 – 21.00</div></div>
       <div class="contact-card"><div class="ic">📧</div><div class="t">Email</div><div class="d" id="contact-email">klikbeliaja88@gmail.com</div></div>
     </div>
@@ -958,7 +973,7 @@
   <div class="container footer-grid">
     <div>
       <h4 style="color:#fff; font-size:18px; text-transform:none; letter-spacing:0;">Klik Beli Aja Mart</h4>
-      <p>Semua kebutuhan rumah, belanja lebih mudah. Sembako, susu, popok bayi, dan kebutuhan harian diantar langsung ke rumahmu.</p>
+      <p>Semua kebutuhan rumah, belanja lebih mudah. Sembako, susu, popok bayi dan kebutuhan harian diantar langsung ke rumahmu.</p>
     </div>
     <div>
       <h4>Belanja</h4>
@@ -1488,6 +1503,10 @@ let cart = {}; // {productId: qty}
 let currentDetailId = null;
 let currentCheckoutStep = 1;
 let checkoutData = {shipping:'delivery', payment:'Transfer Bank', deliveryDate:null, deliverySlot:null};
+// File bukti pembayaran yang dilampirkan pelanggan di Step 3 (Transfer
+// Bank/QRIS wajib mengisi ini sebelum bisa klik "Buat Pesanan") -- lihat
+// handleProofFileSelectStep3() & validasi di placeOrder().
+let pendingProofFile = null;
 let lastOrder = null;
 let ORDERS_DB = {}; // simulasi sheet ORDERS untuk demo tracking
 let dailyOrderCounter = 0;
@@ -2006,6 +2025,12 @@ function selectPay(el){
   if(box) box.style.display = (el.value === 'Transfer Bank') ? 'block' : 'none';
   const qrisBox = document.getElementById('qris-detail-box');
   if(qrisBox) qrisBox.style.display = (el.value === 'QRIS') ? 'block' : 'none';
+  // Bukti pembayaran cuma wajib utk Transfer Bank & QRIS -- COD bayar
+  // tunai saat pesanan tiba jadi tidak butuh bukti sama sekali.
+  const proofBox3 = document.getElementById('proof-upload-box-step3');
+  if(proofBox3) proofBox3.style.display = (el.value === 'COD') ? 'none' : 'block';
+  const errProof = document.getElementById('err-proof-step3');
+  if(errProof) errProof.style.display = 'none';
 }
 document.getElementById('ship-delivery').classList.add('selected');
 document.getElementById('pay-transfer').classList.add('selected');
@@ -2051,6 +2076,18 @@ function generateOrderNumber(){
 
 async function placeOrder(){
   const subtotal = cartSubtotal();
+
+  // Bukti pembayaran WAJIB utk Transfer Bank & QRIS -- pesanan tidak
+  // boleh dibuat sama sekali sebelum bukti dilampirkan (COD dikecualikan
+  // krn bayar tunai langsung saat barang sampai).
+  if(checkoutData.payment !== 'COD' && !pendingProofFile){
+    const errEl = document.getElementById('err-proof-step3');
+    if(errEl) errEl.style.display = 'block';
+    showToast('Upload dulu bukti pembayaran sebelum menyelesaikan pesanan.', true);
+    const box = document.getElementById('proof-upload-box-step3');
+    if(box) box.scrollIntoView({ behavior:'smooth', block:'center' });
+    return;
+  }
 
   // Jaga-jaga terakhir (selain validasi per-step) supaya pesanan di bawah
   // syarat minimal belanja atau tanpa sesi pengantaran tidak lolos.
@@ -2147,6 +2184,22 @@ async function placeOrder(){
   }
   initProofSection();
   showView('success');
+
+  // Kirim otomatis bukti pembayaran yang sudah dilampirkan di Step 3 --
+  // pelanggan sudah wajib melampirkannya sebelum tombol "Buat Pesanan"
+  // bisa diklik (lihat validasi di awal fungsi ini), jadi di titik ini
+  // filenya pasti sudah ada kalau order.needsProof true.
+  const proofFileForThisOrder = pendingProofFile;
+  pendingProofFile = null;
+  const proofInput3 = document.getElementById('proof-file-input-step3');
+  if(proofInput3) proofInput3.value = '';
+  const proofPreview3 = document.getElementById('proof-preview-step3');
+  if(proofPreview3) proofPreview3.innerHTML = 'Belum ada foto';
+  const proofStatus3 = document.getElementById('proof-file-status-step3');
+  if(proofStatus3) proofStatus3.textContent = '';
+  if(order.needsProof && proofFileForThisOrder){
+    finalizeOrderProof(orderNum, proofFileForThisOrder);
+  }
 }
 
 function formatDeliveryDate(dateStr){
@@ -2161,6 +2214,38 @@ function formatDeliveryDate(dateStr){
   }catch(e){ return dateStr; }
 }
 
+// Kunci/buka tombol "Kembali ke Beranda" di halaman sukses selagi bukti
+// pembayaran wajib (Transfer Bank/QRIS) belum berhasil terkirim ke
+// server -- supaya pelanggan tidak bisa "kabur" meninggalkan proses
+// sebelum pesanannya benar-benar punya bukti pembayaran.
+let proofExitLocked = false;
+function lockExitUntilProofDone(locked){
+  proofExitLocked = locked;
+  const btn = document.getElementById('btn-back-home');
+  const notice = document.getElementById('proof-exit-lock-notice');
+  if(btn){ btn.disabled = locked; btn.style.opacity = locked ? '0.5' : ''; btn.style.pointerEvents = locked ? 'none' : ''; }
+  if(notice) notice.style.display = locked ? 'block' : 'none';
+}
+// Peringatan kalau pelanggan coba menutup/reload tab selagi bukti wajib
+// belum berhasil terkirim -- browser akan menampilkan konfirmasi bawaan.
+window.addEventListener('beforeunload', function(e){
+  if(proofExitLocked){ e.preventDefault(); e.returnValue = ''; return ''; }
+});
+
+// Kirim otomatis bukti pembayaran yang sudah dilampirkan pelanggan di
+// Step 3 checkout, segera setelah pesanan berhasil dibuat -- supaya
+// TIDAK ADA jeda di mana pesanan "sudah dibuat" tapi "belum ada bukti".
+// Kalau upload-nya gagal (mis. jaringan putus tepat di momen ini), tombol
+// "Kembali ke Beranda" dikunci & pelanggan diarahkan memakai form upload
+// ulang yang tersedia di halaman ini juga sampai berhasil.
+async function finalizeOrderProof(orderId, file){
+  const statusEl = document.getElementById('proof-status');
+  const previewEl = document.getElementById('proof-preview');
+  lockExitUntilProofDone(true);
+  const ok = await submitPaymentProof(orderId, file, statusEl, previewEl);
+  lockExitUntilProofDone(!ok);
+}
+
 // Tampilkan/sembunyikan form upload bukti pembayaran di halaman sukses
 // sesuai metode pembayaran pesanan yang baru dibuat.
 function initProofSection(){
@@ -2171,6 +2256,7 @@ function initProofSection(){
   document.getElementById('proof-status').textContent = '';
   document.getElementById('proof-status').style.color = '';
   section.style.display = (lastOrder && lastOrder.needsProof) ? 'block' : 'none';
+  lockExitUntilProofDone(false); // direset di sini -- finalizeOrderProof() di placeOrder() yg akan mengunci lagi kalau perlu
 }
 
 // Kecilkan & kompres foto di browser sebelum dikirim (hemat kuota & cepat)
@@ -2200,8 +2286,8 @@ function resizeImageForUpload(file, maxDim, quality){
 // Fungsi inti upload bukti pembayaran -- dipakai baik dari halaman sukses
 // maupun halaman Cek Pesanan (untuk upload ulang kalau ditolak/terlewat).
 async function submitPaymentProof(orderId, file, statusEl, previewEl){
-  if(!file) return;
-  if(!file.type.startsWith('image/')){ showToast('File harus berupa gambar', true); return; }
+  if(!file) return false;
+  if(!file.type.startsWith('image/')){ showToast('File harus berupa gambar', true); return false; }
   statusEl.textContent = 'Mengunggah bukti pembayaran...';
   statusEl.style.color = '';
 
@@ -2212,7 +2298,7 @@ async function submitPaymentProof(orderId, file, statusEl, previewEl){
     if(!isBackendConnected()){
       statusEl.textContent = 'Mode demo: backend belum tersambung, bukti tidak benar-benar tersimpan.';
       statusEl.style.color = 'var(--stamp)';
-      return;
+      return false;
     }
     const base64 = dataUrl.split(',')[1];
     const res = await fetch(CONFIG.API_URL, {
@@ -2228,23 +2314,51 @@ async function submitPaymentProof(orderId, file, statusEl, previewEl){
       statusEl.textContent = 'Bukti pembayaran berhasil dikirim ✓ Menunggu verifikasi admin.';
       statusEl.style.color = 'var(--green-dark)';
       showToast('Bukti pembayaran terkirim');
+      return true;
     } else {
       statusEl.textContent = data.error || 'Gagal mengunggah bukti pembayaran.';
       statusEl.style.color = 'var(--stamp)';
+      return false;
     }
   }catch(err){
     statusEl.textContent = 'Gagal memproses gambar.';
     statusEl.style.color = 'var(--stamp)';
+    return false;
   }
 }
 
-function handleProofUpload(event){
+// Dipanggil saat pelanggan pilih file bukti pembayaran di Step 3
+// checkout (SEBELUM pesanan dibuat) -- wajib diisi utk Transfer Bank/QRIS.
+function handleProofFileSelectStep3(event){
   const file = event.target.files[0];
-  submitPaymentProof(
+  const previewEl = document.getElementById('proof-preview-step3');
+  const statusEl = document.getElementById('proof-file-status-step3');
+  const errEl = document.getElementById('err-proof-step3');
+  if(!file){ pendingProofFile = null; return; }
+  if(!file.type.startsWith('image/')){
+    showToast('File harus berupa gambar', true);
+    event.target.value = '';
+    pendingProofFile = null;
+    return;
+  }
+  pendingProofFile = file;
+  if(errEl) errEl.style.display = 'none';
+  if(statusEl) statusEl.textContent = 'Siap dikirim bersama pesanan.';
+  const reader = new FileReader();
+  reader.onload = (e)=>{
+    if(previewEl) previewEl.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function handleProofUpload(event){
+  const file = event.target.files[0];
+  const ok = await submitPaymentProof(
     lastOrder.id, file,
     document.getElementById('proof-status'),
     document.getElementById('proof-preview')
   );
+  if(lastOrder && lastOrder.needsProof) lockExitUntilProofDone(!ok);
 }
 
 function goTrackOrder(){
@@ -2316,19 +2430,31 @@ function handleTrackProofUpload(event, orderId){
 
 let currentTrackedOrder = null; // {order, items} -- dipakai untuk generate struk PDF
 
-function renderTimeline(orderId, customerName, total, payment, steps, proofInfo, paymentStatus, deliveryDate, deliverySlot){
+function renderTimeline(orderId, customerName, total, payment, steps, proofInfo, paymentStatus, deliveryDate, deliverySlot, cancelled){
   const dotHtml = s => s==='done' ? '✓' : (s==='current' ? '●' : '○');
-  const receiptButton = paymentStatus === 'LUNAS'
+  const receiptButton = (!cancelled && paymentStatus === 'LUNAS')
     ? `<button class="btn btn-dark btn-block" style="margin-top:14px;" onclick="downloadReceipt()">🧾 Download Struk Belanja (PDF)</button>`
     : '';
-  const deliveryInfo = (deliveryDate && deliverySlot)
+  const deliveryInfo = (!cancelled && deliveryDate && deliverySlot)
     ? `<p style="font-size:12.5px; font-weight:700; color:var(--green-dark); background:var(--green-light); border-radius:8px; padding:8px 12px; margin:-6px 0 14px; display:inline-block;">🚚 Diantar batch: ${formatDeliveryDate(deliveryDate)} · Sesi ${deliverySlot}</p>`
+    : '';
+  // Pesanan yang DIBATALKAN admin (mis. bukti pembayaran terbukti
+  // buram/editan/nominal tidak cocok saat dicek mutasi rekening -- lihat
+  // adminCancelOrder_ di Code.gs) ditampilkan beda dari progres normal,
+  // supaya pelanggan langsung tahu alasannya lewat nomor pesanannya.
+  const cancelledBanner = cancelled
+    ? `<div style="margin:6px 0 16px; padding:14px; background:#FDEAEA; border:1.5px solid var(--stamp); border-radius:10px;">
+        <p style="font-size:14px; font-weight:800; color:var(--stamp); margin:0;">❌ Pesanan Dibatalkan</p>
+        <p style="font-size:13px; color:var(--ink); margin:6px 0 0; line-height:1.5;">${(proofInfo && proofInfo.note) ? proofInfo.note : 'Pesanan ini dibatalkan oleh admin toko.'}</p>
+        <p style="font-size:12px; color:var(--ink-soft); margin:8px 0 0;">Kalau ini menurutmu keliru atau kamu ingin membuat pesanan baru, silakan hubungi admin toko lewat WhatsApp.</p>
+      </div>`
     : '';
   document.getElementById('track-result').innerHTML = `
     <div class="form-card">
       <h3>Pesanan #${orderId}</h3>
       <p style="font-size:13px;color:var(--ink-soft);margin-bottom:10px;">${customerName} · Total ${rupiah(total)} · ${payment}</p>
       ${deliveryInfo}
+      ${cancelledBanner}
       <ul class="timeline">
         ${steps.map(s=>`
           <li class="${s.state}">
@@ -2336,7 +2462,7 @@ function renderTimeline(orderId, customerName, total, payment, steps, proofInfo,
             <div><div class="t-title">${s.title}</div><div class="t-time">${s.time}</div></div>
           </li>`).join('')}
       </ul>
-      ${proofStatusBlock(orderId, proofInfo)}
+      ${cancelled ? '' : proofStatusBlock(orderId, proofInfo)}
       ${receiptButton}
     </div>
   `;
@@ -2362,7 +2488,7 @@ async function trackOrder(){
         renderTimeline(
           data.order.Order_ID, data.order.Customer_Name, Number(data.order.Grand_Total), data.order.Payment_Method, data.timeline,
           { status: data.order.Payment_Proof_Status, url: data.order.Payment_Proof_URL, note: data.order.Payment_Proof_Note },
-          data.order.Payment_Status, data.order.Delivery_Date, data.order.Delivery_Slot
+          data.order.Payment_Status, data.order.Delivery_Date, data.order.Delivery_Slot, !!data.cancelled
         );
       } else {
         resultWrap.innerHTML = notFoundHtml;
