@@ -375,13 +375,34 @@
   .fw-bar{height:8px; border-radius:20px; background:#F0DFB8; overflow:hidden;}
   .fw-bar-fill{height:100%; background:linear-gradient(90deg, var(--amber), var(--green)); border-radius:20px; transition:width .3s ease;}
   .fw-sub{font-size:11.5px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.03em; margin:12px 0 8px;}
-  .fw-picks{display:flex; gap:8px; overflow-x:auto; padding-bottom:2px;}
-  .fw-pick{flex:0 0 auto; width:92px; background:#fff; border:1.5px solid var(--line); border-radius:12px; padding:8px; text-align:left; cursor:pointer; font-family:inherit;}
+  /* Sebelumnya daftar produk "yuk lengkapi belanjaanmu" ini geser ke
+     SAMPING (horizontal), yang gampang bikin lebar halaman kebablasan
+     di HP kalau ada satu saja bagian yang tidak menyusut sempurna.
+     Sekarang diubah jadi daftar geser ke ATAS/BAWAH (vertical) yang
+     tingginya dibatasi -- lebih aman utk lebar layar HP & tetap bisa
+     lihat produk lain dgn discroll. */
+  .fw-picks{display:flex; flex-direction:column; gap:8px; max-height:240px; overflow-y:auto; padding-right:2px;}
+  .fw-pick{
+    display:flex; align-items:center; gap:10px; width:100%; min-width:0;
+    background:#fff; border:1.5px solid var(--line); border-radius:12px;
+    padding:8px 10px; text-align:left; cursor:pointer; font-family:inherit;
+  }
   .fw-pick:hover{border-color:var(--green);}
-  .fw-pick-emoji{display:flex; align-items:center; justify-content:center; width:100%; height:44px; font-size:22px; background:var(--green-light); border-radius:8px; overflow:hidden; position:relative;}
-  .fw-pick-name{display:block; font-size:11px; font-weight:700; margin-top:6px; line-height:1.25; height:28px; overflow:hidden;}
-  .fw-pick-price{display:block; font-size:11px; color:var(--green-dark); font-weight:700; margin-top:2px;}
-  .fw-pick-add{display:block; font-size:10.5px; color:#fff; background:var(--green); text-align:center; border-radius:6px; padding:3px 0; margin-top:6px; font-weight:700;}
+  .fw-pick-emoji{
+    flex:0 0 auto; display:flex; align-items:center; justify-content:center;
+    width:42px; height:42px; font-size:19px; background:var(--green-light);
+    border-radius:8px; overflow:hidden; position:relative;
+  }
+  .fw-pick-info{flex:1 1 auto; min-width:0;}
+  .fw-pick-name{
+    display:block; font-size:12px; font-weight:700; line-height:1.3;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .fw-pick-price{display:block; font-size:11.5px; color:var(--green-dark); font-weight:700; margin-top:2px;}
+  .fw-pick-add{
+    flex:0 0 auto; font-size:11px; color:#fff; background:var(--green);
+    text-align:center; border-radius:7px; padding:7px 12px; font-weight:700;
+  }
 
   /* ===== SYARAT MINIMAL BELANJA (minimum order) ===== */
   .minorder-warning{background:#FDEDED; border:1.5px solid var(--stamp); border-radius:14px; padding:12px 14px; margin-bottom:14px; font-size:12.5px; color:#8C1F1F; font-weight:600; line-height:1.4;}
@@ -414,7 +435,7 @@
   .step-pill{flex:1; text-align:center; padding:10px 8px; font-size:12.5px; font-weight:700; background:var(--paper-card); border:1.5px solid var(--line); border-radius:10px; color:var(--ink-soft);}
   .step-pill.active{background:var(--amber); color:#fff; border-color:var(--amber);}
   .step-pill.done{background:var(--green); color:#fff; border-color:var(--green);}
-  .form-card{background:var(--paper-card); border:1px solid var(--line); border-radius:18px; padding:26px; box-shadow:var(--shadow-sm);}
+  .form-card{background:var(--paper-card); border:1px solid var(--line); border-radius:18px; padding:26px; box-shadow:var(--shadow-sm); width:100%; max-width:100%; box-sizing:border-box;}
   .form-card h3{font-size:17px; margin-bottom:18px;}
   .field{margin-bottom:16px; min-width:0;}
   .field label{display:block; font-size:12.5px; font-weight:700; margin-bottom:6px; text-transform:uppercase; letter-spacing:.03em; color:var(--ink-soft);}
@@ -450,6 +471,7 @@
   .order-summary-card{
     background:var(--paper-card); border:1px solid var(--line); border-radius:18px; padding:22px;
     height:fit-content; position:sticky; top:118px; box-shadow:var(--shadow-sm);
+    width:100%; max-width:100%;
     /* Sebelumnya tidak ada batas tinggi -- kalau isi keranjang banyak & jendela
        browser pendek (tablet landscape, laptop kecil), kartu ini bisa jadi lebih
        tinggi dari layar, dan karena tetap sticky, bagian ATASNYA (judul "Ringkasan
@@ -819,15 +841,13 @@
             <textarea id="f-alamat" placeholder="Nama jalan, nomor rumah, patokan"></textarea>
             <div class="field-error" id="err-alamat">Alamat wajib diisi.</div>
           </div>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
-            <div class="field">
-              <label for="f-kec">Kecamatan</label>
-              <input type="text" id="f-kec" placeholder="Kecamatan">
-            </div>
-            <div class="field">
-              <label for="f-kota">Kota</label>
-              <input type="text" id="f-kota" placeholder="Kota">
-            </div>
+          <div class="field">
+            <label for="f-kec">Kecamatan</label>
+            <input type="text" id="f-kec" placeholder="Kecamatan">
+          </div>
+          <div class="field">
+            <label for="f-kota">Kota</label>
+            <input type="text" id="f-kota" placeholder="Kota">
           </div>
           <div class="field">
             <label for="f-catatan">Catatan (opsional)</label>
@@ -1433,8 +1453,10 @@ function freeShipProgressHtml(){
           ${picks.map(p=>`
             <button type="button" class="fw-pick" onclick="addToCart('${p.id}')">
               <span class="fw-pick-emoji">${productImageHtml(p.emoji, p.name)}</span>
-              <span class="fw-pick-name">${p.name}</span>
-              <span class="fw-pick-price">${rupiah(p.price)}</span>
+              <span class="fw-pick-info">
+                <span class="fw-pick-name">${p.name}</span>
+                <span class="fw-pick-price">${rupiah(p.price)}</span>
+              </span>
               <span class="fw-pick-add">+ Tambah</span>
             </button>
           `).join('')}
