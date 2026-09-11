@@ -26,7 +26,7 @@
     --radius: 16px;
   }
   *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
+  html{scroll-behavior:smooth; overflow-x:hidden;}
   body{
     margin:0;
     background:var(--paper);
@@ -149,9 +149,13 @@
     nav.mainnav{
       position:fixed; top:0; left:0; height:100%; width:280px; max-width:82vw;
       z-index:70; box-shadow:6px 0 24px rgba(0,0,0,0.15); border:none;
-      transform:translateX(-100%); transition:transform .25s ease; overflow-y:auto;
+      transform:translateX(-100%); transition:transform .25s ease, visibility .25s ease; overflow-y:auto;
+      /* Sama seperti .drawer keranjang -- ditambah visibility:hidden saat
+         tertutup supaya menu mobile ini tidak ikut menambah lebar halaman
+         ketika sedang disembunyikan di luar layar. */
+      visibility:hidden;
     }
-    nav.mainnav.active{transform:translateX(0);}
+    nav.mainnav.active{transform:translateX(0); visibility:visible; transition:transform .25s ease;}
     nav.mainnav .container{flex-direction:column; align-items:stretch; padding:70px 0 20px; overflow-x:visible;}
     nav.mainnav a{border-bottom:1px solid var(--line); padding:15px 22px; white-space:normal;}
   }
@@ -335,9 +339,19 @@
     position:fixed; top:0; right:0; height:100%; width:420px; max-width:92vw;
     background:var(--paper-card); z-index:90; box-shadow:-8px 0 24px rgba(0,0,0,0.12);
     display:flex; flex-direction:column;
-    transform:translateX(100%); transition:transform .25s ease;
+    transform:translateX(100%); transition:transform .25s ease, visibility .25s ease;
+    /* Sebelumnya drawer cuma digeser keluar layar dgn transform, tapi tetap
+       "ada" di layout. Di banyak browser HP, fixed-element yg cuma digeser
+       transform (bukan disembunyikan) tetap dihitung menambah lebar total
+       halaman, jadi browser otomatis zoom-out utk memuatnya -- efeknya
+       muncul spasi kosong konsisten di kanan layar walau drawer TIDAK lagi
+       kelihatan (persis keluhan "checkout ada ruang kosong di kanan").
+       visibility:hidden saat tertutup menghapus drawer dari perhitungan
+       lebar halaman itu, transisinya ditunda .25s biar animasi geser masih
+       terlihat mulus persis seperti sebelumnya. */
+    visibility:hidden;
   }
-  .drawer.active{transform:translateX(0);}
+  .drawer.active{transform:translateX(0); visibility:visible; transition:transform .25s ease;}
   .drawer-head{display:flex; justify-content:space-between; align-items:center; padding:18px 20px; border-bottom:1px solid var(--line); background:var(--green); color:#fff;}
   .drawer-head h3{color:#fff; font-size:17px;}
   .drawer-close{background:none; border:none; color:#fff; font-size:22px;}
@@ -402,7 +416,7 @@
   .step-pill.done{background:var(--green); color:#fff; border-color:var(--green);}
   .form-card{background:var(--paper-card); border:1px solid var(--line); border-radius:18px; padding:26px; box-shadow:var(--shadow-sm);}
   .form-card h3{font-size:17px; margin-bottom:18px;}
-  .field{margin-bottom:16px;}
+  .field{margin-bottom:16px; min-width:0;}
   .field label{display:block; font-size:12.5px; font-weight:700; margin-bottom:6px; text-transform:uppercase; letter-spacing:.03em; color:var(--ink-soft);}
   .field input, .field textarea{
     width:100%; padding:11px 13px; border:1.5px solid var(--line); border-radius:10px;
@@ -446,14 +460,8 @@
     overflow-y:auto;
   }
   .order-summary-card h3{font-size:16px; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--line);}
-  /* align-items:flex-start + gap (bukan cuma justify-content:space-between)
-     supaya kalau nama produk panjang dan terpaksa turun ke baris ke-2, baris
-     itu tetap rapi di bawah baris pertama alih-alih "mengambang" sejajar
-     dengan harga di sampingnya (sebelumnya harga ikut ke-stretch vertical
-     align default sehingga terlihat nyangkut di tengah nama produk). */
-  .os-line{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; font-size:13px; padding:6px 0;}
-  .os-line .nm{color:var(--ink-soft); flex:1; min-width:0; overflow-wrap:break-word;}
-  .os-line .os-price{flex-shrink:0; white-space:nowrap; text-align:right;}
+  .os-line{display:flex; justify-content:space-between; font-size:13px; padding:6px 0;}
+  .os-line .nm{color:var(--ink-soft);}
 
   /* ===== SUCCESS PAGE ===== */
   .success-wrap{padding:70px 0; display:flex; justify-content:center;}
@@ -584,17 +592,6 @@
     .slot-option{padding:10px 11px;}
     .order-summary-card{padding:16px;}
     .order-summary-card h3{font-size:15px; margin-bottom:12px; padding-bottom:10px;}
-
-    /* Tombol "← Kembali" / "Lanjut ke ... →" / "Buat Pesanan ✓" sebelumnya
-       sejajar horizontal (space-between) dengan lebar mengikuti isi teks.
-       Di HP sempit (~360px ke bawah, ukuran umum HP Android entry-level di
-       Indonesia) dua tombol itu jadi tidak cukup tempat berdampingan, tapi
-       flexbox tidak mengecilkannya secara wajar -- teksnya malah terpotong
-       jadi 2 baris yang janggal (mis. "←" sendirian di baris pertama,
-       "Kembali" di baris ke-2). Ubah jadi ditumpuk (full width, satu tombol
-       per baris) supaya teks tombol selalu muat dalam satu baris. */
-    .step-actions{flex-direction:column; gap:10px;}
-    .step-actions .btn{width:100%;}
 
     /* Perbesar jarak antar section di beranda mode HP -- sebelumnya
        section-section beruntun (Promo Hari Ini, Produk Terlaris) memakai
@@ -1588,9 +1585,29 @@ function showView(name){
   document.querySelectorAll('.mainnav a').forEach(a=>a.classList.remove('active'));
   document.querySelectorAll('.mainnav a[data-nav="'+name+'"]').forEach(a=>a.classList.add('active'));
   window.scrollTo({top:0, behavior:'instant' in document.documentElement.style ? 'instant':'auto'});
+  resetViewportZoom();
   closeMobileNav();
   document.getElementById('mobile-search-row').classList.remove('active');
   if(name==='shop') renderShop();
+}
+
+// Perbaikan utk keluhan "tampilan checkout kosong/geser di sisi kanan layar
+// di HP" yang tetap muncul walau CSS checkout sendiri sudah full-width dan
+// responsif. Karena situs ini SPA (pindah tampilan tanpa reload halaman),
+// kalau browser HP sempat sedikit ter-zoom/pan di layar SEBELUMNYA (mis.
+// gara-gara pinch-zoom tidak sengaja, atau auto-zoom bawaan browser), status
+// zoom itu TIDAK ikut ter-reset saat pindah ke tampilan lain -- jadi
+// tampilan berikutnya (termasuk Checkout) terlihat "bergeser"/ada spasi
+// kosong di kanan padahal layout-nya sendiri sudah benar. Trik standarnya:
+// utak-atik ulang atribut viewport supaya browser mobile dipaksa kembali ke
+// skala 100%, lalu dikembalikan lagi sebentar kemudian supaya pelanggan
+// tetap bisa pinch-zoom manual seperti biasa kalau memang perlu.
+function resetViewportZoom(){
+  const meta = document.querySelector('meta[name="viewport"]');
+  if(!meta) return;
+  const original = meta.getAttribute('content');
+  meta.setAttribute('content', original + ', maximum-scale=1.0');
+  setTimeout(()=>{ meta.setAttribute('content', original); }, 350);
 }
 
 /* ============================================================
@@ -1967,7 +1984,7 @@ function renderCheckoutSummary(){
   const linesWrap = document.getElementById('checkout-lines');
   linesWrap.innerHTML = Object.entries(cart).map(([id,qty])=>{
     const p = getProduct(id);
-    return `<div class="os-line"><span class="nm">${p.name} × ${qty}</span><span class="os-price">${rupiah(p.price*qty)}</span></div>`;
+    return `<div class="os-line"><span class="nm">${p.name} × ${qty}</span><span>${rupiah(p.price*qty)}</span></div>`;
   }).join('');
   const subtotal = cartSubtotal();
   const shipResult = calculateShippingFee();
