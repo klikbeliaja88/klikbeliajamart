@@ -26,7 +26,7 @@
     --radius: 16px;
   }
   *{box-sizing:border-box;}
-  html{scroll-behavior:smooth; overflow-x:hidden;}
+  html{scroll-behavior:smooth;}
   body{
     margin:0;
     background:var(--paper);
@@ -149,13 +149,9 @@
     nav.mainnav{
       position:fixed; top:0; left:0; height:100%; width:280px; max-width:82vw;
       z-index:70; box-shadow:6px 0 24px rgba(0,0,0,0.15); border:none;
-      transform:translateX(-100%); transition:transform .25s ease, visibility .25s ease; overflow-y:auto;
-      /* Sama seperti .drawer keranjang -- ditambah visibility:hidden saat
-         tertutup supaya menu mobile ini tidak ikut menambah lebar halaman
-         ketika sedang disembunyikan di luar layar. */
-      visibility:hidden;
+      transform:translateX(-100%); transition:transform .25s ease; overflow-y:auto;
     }
-    nav.mainnav.active{transform:translateX(0); visibility:visible; transition:transform .25s ease;}
+    nav.mainnav.active{transform:translateX(0);}
     nav.mainnav .container{flex-direction:column; align-items:stretch; padding:70px 0 20px; overflow-x:visible;}
     nav.mainnav a{border-bottom:1px solid var(--line); padding:15px 22px; white-space:normal;}
   }
@@ -339,19 +335,9 @@
     position:fixed; top:0; right:0; height:100%; width:420px; max-width:92vw;
     background:var(--paper-card); z-index:90; box-shadow:-8px 0 24px rgba(0,0,0,0.12);
     display:flex; flex-direction:column;
-    transform:translateX(100%); transition:transform .25s ease, visibility .25s ease;
-    /* Sebelumnya drawer cuma digeser keluar layar dgn transform, tapi tetap
-       "ada" di layout. Di banyak browser HP, fixed-element yg cuma digeser
-       transform (bukan disembunyikan) tetap dihitung menambah lebar total
-       halaman, jadi browser otomatis zoom-out utk memuatnya -- efeknya
-       muncul spasi kosong konsisten di kanan layar walau drawer TIDAK lagi
-       kelihatan (persis keluhan "checkout ada ruang kosong di kanan").
-       visibility:hidden saat tertutup menghapus drawer dari perhitungan
-       lebar halaman itu, transisinya ditunda .25s biar animasi geser masih
-       terlihat mulus persis seperti sebelumnya. */
-    visibility:hidden;
+    transform:translateX(100%); transition:transform .25s ease;
   }
-  .drawer.active{transform:translateX(0); visibility:visible; transition:transform .25s ease;}
+  .drawer.active{transform:translateX(0);}
   .drawer-head{display:flex; justify-content:space-between; align-items:center; padding:18px 20px; border-bottom:1px solid var(--line); background:var(--green); color:#fff;}
   .drawer-head h3{color:#fff; font-size:17px;}
   .drawer-close{background:none; border:none; color:#fff; font-size:22px;}
@@ -460,8 +446,14 @@
     overflow-y:auto;
   }
   .order-summary-card h3{font-size:16px; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--line);}
-  .os-line{display:flex; justify-content:space-between; font-size:13px; padding:6px 0;}
-  .os-line .nm{color:var(--ink-soft);}
+  /* align-items:flex-start + gap (bukan cuma justify-content:space-between)
+     supaya kalau nama produk panjang dan terpaksa turun ke baris ke-2, baris
+     itu tetap rapi di bawah baris pertama alih-alih "mengambang" sejajar
+     dengan harga di sampingnya (sebelumnya harga ikut ke-stretch vertical
+     align default sehingga terlihat nyangkut di tengah nama produk). */
+  .os-line{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; font-size:13px; padding:6px 0;}
+  .os-line .nm{color:var(--ink-soft); flex:1; min-width:0; overflow-wrap:break-word;}
+  .os-line .os-price{flex-shrink:0; white-space:nowrap; text-align:right;}
 
   /* ===== SUCCESS PAGE ===== */
   .success-wrap{padding:70px 0; display:flex; justify-content:center;}
@@ -593,6 +585,17 @@
     .order-summary-card{padding:16px;}
     .order-summary-card h3{font-size:15px; margin-bottom:12px; padding-bottom:10px;}
 
+    /* Tombol "← Kembali" / "Lanjut ke ... →" / "Buat Pesanan ✓" sebelumnya
+       sejajar horizontal (space-between) dengan lebar mengikuti isi teks.
+       Di HP sempit (~360px ke bawah, ukuran umum HP Android entry-level di
+       Indonesia) dua tombol itu jadi tidak cukup tempat berdampingan, tapi
+       flexbox tidak mengecilkannya secara wajar -- teksnya malah terpotong
+       jadi 2 baris yang janggal (mis. "←" sendirian di baris pertama,
+       "Kembali" di baris ke-2). Ubah jadi ditumpuk (full width, satu tombol
+       per baris) supaya teks tombol selalu muat dalam satu baris. */
+    .step-actions{flex-direction:column; gap:10px;}
+    .step-actions .btn{width:100%;}
+
     /* Perbesar jarak antar section di beranda mode HP -- sebelumnya
        section-section beruntun (Promo Hari Ini, Produk Terlaris) memakai
        padding-top:0 supaya tidak dobel jarak di desktop, tapi di layar
@@ -613,8 +616,8 @@
 
 <div class="topbar">
   <div class="container">
-    <span>📍 Melayani area sekitar toko pengiriman hari ini untuk order sebelum jam 15.00</span>
-    <span>💬 WhatsApp Admin: <span id="topbar-wa">0895-4026-65455</span></span>
+    <span>📍 Melayani area sekitar toko — pengiriman hari ini untuk order sebelum jam 15.00</span>
+    <span>💬 WhatsApp Admin: <span id="topbar-wa">0812-3456-7890</span></span>
   </div>
 </div>
 
@@ -673,7 +676,7 @@
       <div>
         <span class="eyebrow-tag">🏷️ Toko Kelontong Online No.1 di Sekitarmu</span>
         <h1>Belanja kebutuhan rumah,<br><em>jadi lebih mudah.</em></h1>
-        <p class="lede">Sembako, susu, popok bayi, sampai perlengkapan bersih-bersih rumah pesan lewat HP, kami antar sampai depan pintu hari ini juga.</p>
+        <p class="lede">Sembako, susu, popok bayi, sampai perlengkapan bersih-bersih rumah — pesan lewat HP, kami antar sampai depan pintu hari ini juga.</p>
         <div class="hero-ctas">
           <button class="btn btn-primary" onclick="showView('shop')">Belanja Sekarang →</button>
           <button class="btn btn-ghost" onclick="showView('track')">Lacak Pesanan Saya</button>
@@ -993,8 +996,8 @@
 <section class="view" id="view-about">
   <div class="container prose-page">
     <h1>Tentang Klik Beli Aja Mart</h1>
-    <p>Klik Beli Aja Mart adalah toko kelontong online yang melayani kebutuhan sembako dan rumah tangga harian dari beras dan minyak goreng, susu untuk si kecil dan ibu hamil, popok bayi, sampai perlengkapan kebersihan rumah.</p>
-    <p>Kami percaya belanja kebutuhan rumah tidak perlu ribet. Cukup buka website, pilih produk, dan pesanan diantar ke rumahmu hari itu juga. Cocok untuk ibu rumah tangga, keluarga muda, orang tua dengan bayi, sampai karyawan yang sibuk sepanjang hari.</p>
+    <p>Klik Beli Aja Mart adalah toko kelontong online yang melayani kebutuhan sembako dan rumah tangga harian — dari beras dan minyak goreng, susu untuk si kecil dan ibu hamil, popok bayi, sampai perlengkapan kebersihan rumah.</p>
+    <p>Kami percaya belanja kebutuhan rumah tidak perlu ribet. Cukup buka website, pilih produk, dan pesanan diantar ke rumahmu hari itu juga — cocok untuk ibu rumah tangga, keluarga muda, orang tua dengan bayi, sampai karyawan yang sibuk sepanjang hari.</p>
     <p>Setiap pesanan diproses dengan cermat: stok selalu diperbarui, harga transparan, dan tim kami siap membantu lewat WhatsApp kapan pun kamu butuh.</p>
   </div>
 </section>
@@ -1005,10 +1008,10 @@
     <h1>Hubungi Kami</h1>
     <p>Ada pertanyaan soal produk, stok, atau pesananmu? Tim kami siap membantu setiap hari.</p>
     <div class="contact-cards">
-      <div class="contact-card"><div class="ic">💬</div><div class="t">WhatsApp</div><div class="d" id="contact-wa">0895-4026-65455</div></div>
-      <div class="contact-card"><div class="ic">📍</div><div class="t">Alamat Toko</div><div class="d" id="contact-address">Taman Adiyasa Blok N 12 No 11, Kabupaten Tangerang</div></div>
+      <div class="contact-card"><div class="ic">💬</div><div class="t">WhatsApp</div><div class="d" id="contact-wa">0812-3456-7890</div></div>
+      <div class="contact-card"><div class="ic">📍</div><div class="t">Alamat Toko</div><div class="d" id="contact-address">Jl. Kenanga Raya No. 12, Jakarta</div></div>
       <div class="contact-card"><div class="ic">🕒</div><div class="t">Jam Operasional</div><div class="d" id="contact-hours">Setiap hari, 07.00 – 21.00</div></div>
-      <div class="contact-card"><div class="ic">📧</div><div class="t">Email</div><div class="d" id="contact-email">klikbeliaja88@gmail.com</div></div>
+      <div class="contact-card"><div class="ic">📧</div><div class="t">Email</div><div class="d" id="contact-email">halo@klikbeliajamart.id</div></div>
     </div>
   </div>
 </section>
@@ -1017,7 +1020,7 @@
   <div class="container footer-grid">
     <div>
       <h4 style="color:#fff; font-size:18px; text-transform:none; letter-spacing:0;">Klik Beli Aja Mart</h4>
-      <p>Semua kebutuhan rumah, belanja lebih mudah. Sembako, susu, popok bayi dan kebutuhan harian diantar langsung ke rumahmu.</p>
+      <p>Semua kebutuhan rumah, belanja lebih mudah. Sembako, susu, popok bayi, dan kebutuhan harian — diantar langsung ke rumahmu.</p>
     </div>
     <div>
       <h4>Belanja</h4>
@@ -1037,8 +1040,8 @@
     <div>
       <h4>Ikuti Kami</h4>
       <ul>
-        <li id="footer-instagram">Instagram @klikbeliaja88</li>
-        <li>WhatsApp <span id="footer-wa">0895-4026-65455</span></li>
+        <li id="footer-instagram">Instagram @klikbeliajamart</li>
+        <li>WhatsApp <span id="footer-wa">0812-3456-7890</span></li>
       </ul>
     </div>
   </div>
@@ -1138,7 +1141,7 @@ const DEFAULT_DELIVERY_SLOTS = [
 // Nilai default dipakai kalau belum tersambung ke Sheets / kolom Settings kosong
 let STORE_SETTINGS = {
   shippingFee: 10000,
-  whatsapp: '0895-4026-65455',
+  whatsapp: '0812-3456-7890',
   heroTitle: 'Promo Hari Ini',
   storeName: 'Klik Beli Aja Mart',
   bank: { name:'', account:'', holder:'' },
@@ -1585,29 +1588,9 @@ function showView(name){
   document.querySelectorAll('.mainnav a').forEach(a=>a.classList.remove('active'));
   document.querySelectorAll('.mainnav a[data-nav="'+name+'"]').forEach(a=>a.classList.add('active'));
   window.scrollTo({top:0, behavior:'instant' in document.documentElement.style ? 'instant':'auto'});
-  resetViewportZoom();
   closeMobileNav();
   document.getElementById('mobile-search-row').classList.remove('active');
   if(name==='shop') renderShop();
-}
-
-// Perbaikan utk keluhan "tampilan checkout kosong/geser di sisi kanan layar
-// di HP" yang tetap muncul walau CSS checkout sendiri sudah full-width dan
-// responsif. Karena situs ini SPA (pindah tampilan tanpa reload halaman),
-// kalau browser HP sempat sedikit ter-zoom/pan di layar SEBELUMNYA (mis.
-// gara-gara pinch-zoom tidak sengaja, atau auto-zoom bawaan browser), status
-// zoom itu TIDAK ikut ter-reset saat pindah ke tampilan lain -- jadi
-// tampilan berikutnya (termasuk Checkout) terlihat "bergeser"/ada spasi
-// kosong di kanan padahal layout-nya sendiri sudah benar. Trik standarnya:
-// utak-atik ulang atribut viewport supaya browser mobile dipaksa kembali ke
-// skala 100%, lalu dikembalikan lagi sebentar kemudian supaya pelanggan
-// tetap bisa pinch-zoom manual seperti biasa kalau memang perlu.
-function resetViewportZoom(){
-  const meta = document.querySelector('meta[name="viewport"]');
-  if(!meta) return;
-  const original = meta.getAttribute('content');
-  meta.setAttribute('content', original + ', maximum-scale=1.0');
-  setTimeout(()=>{ meta.setAttribute('content', original); }, 350);
 }
 
 /* ============================================================
@@ -1984,7 +1967,7 @@ function renderCheckoutSummary(){
   const linesWrap = document.getElementById('checkout-lines');
   linesWrap.innerHTML = Object.entries(cart).map(([id,qty])=>{
     const p = getProduct(id);
-    return `<div class="os-line"><span class="nm">${p.name} × ${qty}</span><span>${rupiah(p.price*qty)}</span></div>`;
+    return `<div class="os-line"><span class="nm">${p.name} × ${qty}</span><span class="os-price">${rupiah(p.price*qty)}</span></div>`;
   }).join('');
   const subtotal = cartSubtotal();
   const shipResult = calculateShippingFee();
