@@ -26,7 +26,7 @@
     --radius: 16px;
   }
   *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
+  html{scroll-behavior:smooth; overflow-x:hidden;}
   body{
     margin:0;
     background:var(--paper);
@@ -149,9 +149,13 @@
     nav.mainnav{
       position:fixed; top:0; left:0; height:100%; width:280px; max-width:82vw;
       z-index:70; box-shadow:6px 0 24px rgba(0,0,0,0.15); border:none;
-      transform:translateX(-100%); transition:transform .25s ease; overflow-y:auto;
+      transform:translateX(-100%); transition:transform .25s ease, visibility .25s ease; overflow-y:auto;
+      /* Sama seperti .drawer keranjang -- ditambah visibility:hidden saat
+         tertutup supaya menu mobile ini tidak ikut menambah lebar halaman
+         ketika sedang disembunyikan di luar layar. */
+      visibility:hidden;
     }
-    nav.mainnav.active{transform:translateX(0);}
+    nav.mainnav.active{transform:translateX(0); visibility:visible; transition:transform .25s ease;}
     nav.mainnav .container{flex-direction:column; align-items:stretch; padding:70px 0 20px; overflow-x:visible;}
     nav.mainnav a{border-bottom:1px solid var(--line); padding:15px 22px; white-space:normal;}
   }
@@ -335,9 +339,19 @@
     position:fixed; top:0; right:0; height:100%; width:420px; max-width:92vw;
     background:var(--paper-card); z-index:90; box-shadow:-8px 0 24px rgba(0,0,0,0.12);
     display:flex; flex-direction:column;
-    transform:translateX(100%); transition:transform .25s ease;
+    transform:translateX(100%); transition:transform .25s ease, visibility .25s ease;
+    /* Sebelumnya drawer cuma digeser keluar layar dgn transform, tapi tetap
+       "ada" di layout. Di banyak browser HP, fixed-element yg cuma digeser
+       transform (bukan disembunyikan) tetap dihitung menambah lebar total
+       halaman, jadi browser otomatis zoom-out utk memuatnya -- efeknya
+       muncul spasi kosong konsisten di kanan layar walau drawer TIDAK lagi
+       kelihatan (persis keluhan "checkout ada ruang kosong di kanan").
+       visibility:hidden saat tertutup menghapus drawer dari perhitungan
+       lebar halaman itu, transisinya ditunda .25s biar animasi geser masih
+       terlihat mulus persis seperti sebelumnya. */
+    visibility:hidden;
   }
-  .drawer.active{transform:translateX(0);}
+  .drawer.active{transform:translateX(0); visibility:visible; transition:transform .25s ease;}
   .drawer-head{display:flex; justify-content:space-between; align-items:center; padding:18px 20px; border-bottom:1px solid var(--line); background:var(--green); color:#fff;}
   .drawer-head h3{color:#fff; font-size:17px;}
   .drawer-close{background:none; border:none; color:#fff; font-size:22px;}
@@ -616,7 +630,7 @@
     </a>
     <div class="search-wrap" id="desktop-search-wrap">
       <span class="ic">🔍</span>
-      <input id="global-search" type="text" placeholder="Cari sembako dan kebutuhanmu" onkeydown="if(event.key==='Enter'){searchAndGo(this.value)}">
+      <input id="global-search" type="text" placeholder="Cari sembako, susu, pampers, dll..." onkeydown="if(event.key==='Enter'){searchAndGo(this.value)}">
     </div>
     <div class="header-actions">
       <button class="icon-btn mobile-search-btn" title="Cari" onclick="toggleMobileSearch()">🔍</button>
@@ -628,7 +642,7 @@
   </div>
   <div class="mobile-search-row" id="mobile-search-row">
     <span class="ic">🔍</span>
-    <input id="global-search-mobile" type="text" placeholder="Cari sembako dan kebutuhanmu" onkeydown="if(event.key==='Enter'){searchAndGo(this.value)}">
+    <input id="global-search-mobile" type="text" placeholder="Cari sembako, susu, pampers, dll..." onkeydown="if(event.key==='Enter'){searchAndGo(this.value)}">
   </div>
 </header>
 <!-- Menu mobile & overlay-nya sengaja diletakkan DI LUAR <header>. Header
@@ -1003,7 +1017,7 @@
   <div class="container footer-grid">
     <div>
       <h4 style="color:#fff; font-size:18px; text-transform:none; letter-spacing:0;">Klik Beli Aja Mart</h4>
-      <p>Semua kebutuhan rumah, belanja lebih mudah. Sembako, susu, popok bayi, dan kebutuhan harian diantar langsung ke rumahmu.</p>
+      <p>Semua kebutuhan rumah, belanja lebih mudah. Sembako, susu, popok bayi dan kebutuhan harian diantar langsung ke rumahmu.</p>
     </div>
     <div>
       <h4>Belanja</h4>
@@ -1571,9 +1585,29 @@ function showView(name){
   document.querySelectorAll('.mainnav a').forEach(a=>a.classList.remove('active'));
   document.querySelectorAll('.mainnav a[data-nav="'+name+'"]').forEach(a=>a.classList.add('active'));
   window.scrollTo({top:0, behavior:'instant' in document.documentElement.style ? 'instant':'auto'});
+  resetViewportZoom();
   closeMobileNav();
   document.getElementById('mobile-search-row').classList.remove('active');
   if(name==='shop') renderShop();
+}
+
+// Perbaikan utk keluhan "tampilan checkout kosong/geser di sisi kanan layar
+// di HP" yang tetap muncul walau CSS checkout sendiri sudah full-width dan
+// responsif. Karena situs ini SPA (pindah tampilan tanpa reload halaman),
+// kalau browser HP sempat sedikit ter-zoom/pan di layar SEBELUMNYA (mis.
+// gara-gara pinch-zoom tidak sengaja, atau auto-zoom bawaan browser), status
+// zoom itu TIDAK ikut ter-reset saat pindah ke tampilan lain -- jadi
+// tampilan berikutnya (termasuk Checkout) terlihat "bergeser"/ada spasi
+// kosong di kanan padahal layout-nya sendiri sudah benar. Trik standarnya:
+// utak-atik ulang atribut viewport supaya browser mobile dipaksa kembali ke
+// skala 100%, lalu dikembalikan lagi sebentar kemudian supaya pelanggan
+// tetap bisa pinch-zoom manual seperti biasa kalau memang perlu.
+function resetViewportZoom(){
+  const meta = document.querySelector('meta[name="viewport"]');
+  if(!meta) return;
+  const original = meta.getAttribute('content');
+  meta.setAttribute('content', original + ', maximum-scale=1.0');
+  setTimeout(()=>{ meta.setAttribute('content', original); }, 350);
 }
 
 /* ============================================================
