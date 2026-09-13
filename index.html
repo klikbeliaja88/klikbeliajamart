@@ -31,6 +31,7 @@
      persis seperti emoji yang digantikan tanpa perlu CSS tambahan
      di tiap tempat pemakaian. */
   .icon{width:1em; height:1em; vertical-align:-0.125em; flex-shrink:0; display:inline-block;}
+  .icon-fallback{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:28px; color:var(--ink-soft); background:var(--green-light);}
   .filter-cat-icon{display:inline-flex; vertical-align:-0.2em; color:var(--ink-soft);}
   html{scroll-behavior:smooth;}
   body{
@@ -1689,26 +1690,42 @@ const ICON_PATHS = {
   can: '<rect x="7" y="4" width="10" height="16" rx="2"/><path d="M7 8.5h10"/>',
   soap: '<rect x="4" y="9" width="16" height="8.5" rx="4"/><circle cx="17.5" cy="5.5" r="1"/><circle cx="14.5" cy="4" r="0.8"/>',
   basket: '<path d="M4 10h16l-1.6 9.5H5.6z"/><path d="M8 10L9.2 5h5.6L16 10"/><path d="M4 10a8 3.5 0 0 0 16 0"/>',
+  baby: '<circle cx="12" cy="9.5" r="5"/><path d="M9 9.5h6"/><path d="M12 14.5v2.5a2 2 0 1 0 2-2"/>',
+  pill: '<rect x="3" y="9.5" width="18" height="6" rx="3"/><path d="M12 9.5v6"/>',
+  leaf: '<path d="M4.5 20c0-8.5 6-15 15-15 0 8.5-6.5 15-15 15z"/><path d="M4.5 20c3.5-3.5 7-7 11-11"/>',
 };
 function icon(name, cls){
   const path = ICON_PATHS[name] || ICON_PATHS.tag;
   return `<svg class="icon${cls ? ' '+cls : ''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${path}</svg>`;
 }
-// Kategori/produk demo sebelumnya pakai emoji bebas sbg "foto". Peta ini
+// Kategori/produk sebelumnya pakai emoji bebas sbg "foto". Peta ini
 // menerjemahkan emoji yang lazim dipakai ke ikon SVG yang senada, supaya
-// kategori bawaan langsung tampil modern TANPA perlu mengubah data yang
-// tersimpan (admin yang sudah terlanjur pakai emoji lain tetap tampil apa
-// adanya, tidak rusak -- cuma yang dikenali di peta ini yang diperhalus).
+// tampil modern TANPA perlu mengubah data yang tersimpan.
 const EMOJI_ICON_MAP = {
   '🛒':'cart', '🍼':'bottle', '🧴':'droplet', '🧷':'gift', '🥛':'droplet',
   '🧻':'tissue', '🌾':'wheat', '🍚':'wheat', '🥚':'egg', '🧹':'broom',
   '🏠':'home', '🔥':'flame', '🤰':'droplet', '🍯':'can', '🥫':'can',
   '🧼':'soap', '🧽':'soap', '🧺':'basket', '💧':'droplet', '💡':'bulb',
+  '👶':'baby', '👼':'baby', '💊':'pill', '💉':'pill', '🩹':'pill',
+  '🥬':'leaf', '🥦':'leaf', '🥕':'leaf', '🍅':'leaf', '🥒':'leaf',
+  '🌽':'leaf', '🥔':'leaf', '🧅':'leaf', '🧄':'leaf', '🍆':'leaf',
+  '🍎':'leaf', '🍊':'leaf', '🍌':'leaf', '🍇':'leaf', '🍓':'leaf',
+  '♨️':'flame', '🌶️':'flame', '🧂':'can', '🍶':'can', '🍷':'can',
+  '🐟':'basket', '🍗':'basket', '🥩':'basket', '🥓':'basket', '🍖':'basket',
+  '💄':'droplet', '🧽':'soap', '🚿':'droplet', '🧯':'flame', '🔌':'bulb',
+  '🍫':'gift', '🍬':'gift', '🍭':'gift', '🎁':'gift', '📓':'folder',
+  '✏️':'folder', '🐾':'gift', '🚬':'flame', '☕':'can', '🍵':'can',
 };
+// Kalau emoji yang dipakai tidak dikenali di peta manapun (kategori
+// apapun yang ditambahkan admin di masa depan), JANGAN tampilkan emoji
+// mentahnya -- selalu jatuh ke ikon generik ini, supaya dijamin tidak ada
+// emoji kartun yang lolos tampil di manapun.
+const ICON_FALLBACK_DEFAULT = 'tag';
 function categoryIconHtml(rawIcon){
   if(isImageUrl(rawIcon)) return productImageHtml(rawIcon, '');
+  if(!rawIcon) return icon(ICON_FALLBACK_DEFAULT);
   const mapped = EMOJI_ICON_MAP[rawIcon];
-  return mapped ? icon(mapped) : escapeHtml(rawIcon || '');
+  return icon(mapped || ICON_FALLBACK_DEFAULT);
 }
 
 
@@ -1721,12 +1738,31 @@ function productImageHtml(val, altText){
   if(isImageUrl(val)){
     const alt = (altText||'').replace(/"/g,'&quot;');
     // position:absolute + onerror fallback supaya tidak berantakan kalau link
-    // gambar gagal dimuat (link rusak/foto dihapus dari Drive, dll)
-    return `<img src="${val}" alt="${alt}" loading="lazy" onerror="this.onerror=null;this.replaceWith(Object.assign(document.createElement('span'),{className:'icon-fallback', innerHTML:${JSON.stringify(icon('image'))}}));" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;">`;
+    // gambar gagal dimuat (link rusak/foto dihapus dari Drive, dll).
+    // PENTING: onerror di sini cuma memanggil handleImageError(this,'image')
+    // -- argumen yang dikirim cuma nama ikon polos, BUKAN markup SVG penuh.
+    // Sebelumnya kode di sini mencoba menyisipkan hasil JSON.stringify(SVG)
+    // langsung ke dalam atribut onerror, padahal SVG itu sendiri mengandung
+    // banyak tanda kutip ("). HTML tidak mengenal escape ala JS (\"), jadi
+    // parser browser berhenti membaca atribut onerror tepat di kutip
+    // pertama yang ditemui -- sisa markup (termasuk atribut style di bawah)
+    // jadi "lepas" dan malah tercetak sebagai teks mentah di halaman.
+    return `<img src="${val}" alt="${alt}" loading="lazy" onerror="handleImageError(this,'image')" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;">`;
   }
   if(!val) return icon('cart');
   const mapped = EMOJI_ICON_MAP[val];
-  return mapped ? icon(mapped) : escapeHtml(val);
+  return icon(mapped || ICON_FALLBACK_DEFAULT);
+}
+// Dipanggil dari atribut onerror di atas kalau foto gagal dimuat (link
+// rusak/foto dihapus). Diberi nama ikon POLOS (string biasa) sebagai
+// argumen, lalu SVG-nya baru dibuat DI SINI (di JS, bukan di atribut HTML)
+// -- jadi tidak ada risiko tanda kutip merusak parsing atribut sama sekali.
+function handleImageError(imgEl, iconName){
+  imgEl.onerror = null;
+  const span = document.createElement('span');
+  span.className = 'icon-fallback';
+  span.innerHTML = icon(iconName);
+  imgEl.replaceWith(span);
 }
 
 /* ============================================================
